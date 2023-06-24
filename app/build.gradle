@@ -23,6 +23,7 @@ android {
         }
 
         buildConfigField 'String', 'HOT_PEPPER_API_KEY', "\"${project.properties["HOT_PEPPER_API_KEY"]}\""
+        buildConfigField 'String', 'GOOGLE_PLACES_API_KEY', "\"${project.properties["GOOGLE_PLACES_API_KEY"]}\""
 
     }
 

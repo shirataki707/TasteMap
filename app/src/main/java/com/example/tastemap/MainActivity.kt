@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
+import com.example.tastemap.data.api.places.PlacesApiDetailRequest
+import com.example.tastemap.data.api.places.PlacesApiIdRequest
 import com.example.tastemap.ui.theme.TasteMapTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,16 +34,22 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        val request = HotPepperApiRequest(
-                            lat = 33.652294,
-                            lng = 130.672144,
-                            range = 5,
-                            keyword = "",
-                            order = 4,
-                            count = 10
+//                        val request = HotPepperApiRequest(
+//                            lat = 33.652294,
+//                            lng = 130.672144,
+//                            range = 5,
+//                            keyword = "",
+//                            order = 4,
+//                            count = 10
+//                        )
+//                        val request = PlacesApiIdRequest(
+//                            input = "居酒家 ぐらんま"
+//                        )
+                        val request = PlacesApiDetailRequest(
+                            placeId = "ChIJT76cjUV-QTURQvOgzC3xlVk"
                         )
                         Button(
-                            onClick = { viewModel.fetchShops(request) },
+                            onClick = { viewModel.fetchPlaceDetail(request) },
                             modifier = Modifier.align(Alignment.Center)
                         ) {
                             Text("API call")
