@@ -48,8 +48,8 @@ object HotPepperApiModule {
     fun provideApiClient(
         apiService: HotPepperApiService
     ): HotPepperApiClient {
-//        return HotPepperApiClientImpl(apiService)
-        return HotPepperMockApiClientImpl()
+        return HotPepperApiClientImpl(apiService)
+//        return HotPepperMockApiClientImpl()
     }
 
 

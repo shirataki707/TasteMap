@@ -1,5 +1,8 @@
 package com.example.tastemap.data.api.hotpepper
 
+import com.example.tastemap.BuildConfig
+
+
 /*
  [参照] https://webservice.recruit.co.jp/doc/hotpepper/reference.html
  rangeは5段階．1. 300m, 2. 500m, 3. 1000m(default), 4. 2000m, 5. 3000m
@@ -7,7 +10,7 @@ package com.example.tastemap.data.api.hotpepper
  */
 
 data class HotPepperApiRequest(
-    val key: String = "e19e6c03dc5d49be",
+    val key: String = BuildConfig.HOT_PEPPER_API_KEY,
     val lat: Double,
     val lng: Double,
     val range: Int,
