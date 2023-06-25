@@ -10,8 +10,10 @@ import com.example.tastemap.data.model.PlaceDetailResult
 import com.example.tastemap.data.model.PlaceId
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.data.model.Shop
+import com.example.tastemap.data.repository.AuthRepository
 import com.example.tastemap.data.repository.HotPepperApiRepository
 import com.example.tastemap.data.repository.PlacesApiRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -21,7 +23,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val hotPepperApiRepository: HotPepperApiRepository,
-    private val placesApiRepository: PlacesApiRepository
+    private val placesApiRepository: PlacesApiRepository,
+    private val authRepository: AuthRepository,
+    private val auth: FirebaseAuth
 ): ViewModel() {
 
     fun fetchRestaurants(request: HotPepperApiRequest, isSortSelected: Boolean) {
@@ -80,6 +84,33 @@ class MainActivityViewModel @Inject constructor(
     private fun applyPreference(shopList: List<Shop>): List<Shop> {
         // [TODO] shopListから，好みを抜き出し，ランダムにソート, 20件程度にして返す(ID, Detailのリクエスト回数削減)
         return shopList
+    }
+
+    fun signUp(email: String, password: String) {
+        authRepository.createAccount(
+            email,
+            password,
+            onSuccess = {
+                Timber.d("signUp success")
+                Timber.d("currentUser: ${auth.currentUser}") },
+            onFailure = { Timber.d("signUp failure")}
+        )
+    }
+
+    fun signIn(email: String, password: String) {
+        authRepository.signIn(
+            email,
+            password,
+            onSuccess = {
+                Timber.d("signIn success")
+                Timber.d("currentUser: ${auth.currentUser}")},
+            onFailure = { Timber.d("signIn failure")}
+        )
+    }
+
+    fun signOut() {
+        authRepository.signOut()
+        Timber.d("currentUser: ${auth.currentUser}")
     }
 
 }

@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,7 +36,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         val request = HotPepperApiRequest(
                             lat = 33.652294,
                             lng = 130.672144,
@@ -42,17 +49,42 @@ class MainActivity : ComponentActivity() {
                             order = 4,
                             count = 10
                         )
-//                        val request = PlacesApiIdRequest(
-//                            input = "居酒家 ぐらんま"
-//                        )
-//                        val request = PlacesApiDetailRequest(
-//                            placeId = "ChIJT76cjUV-QTURQvOgzC3xlVk"
-//                        )
-                        Button(
-                            onClick = { viewModel.fetchRestaurants(request, true) },
-                            modifier = Modifier.align(Alignment.Center)
-                        ) {
-                            Text("API call")
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Button(
+                                onClick = { viewModel.fetchRestaurants(request, true) },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text("API call")
+                            }
+                        }
+
+                        val email = "test2@gmail.com"
+                        val password = "12345678"
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Button(
+                                onClick = { viewModel.signUp(email, password) },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text("SignUp")
+                            }
+                        }
+
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Button(
+                                onClick = { viewModel.signIn(email, password) },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text("SignIn")
+                            }
+                        }
+
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Button(
+                                onClick = { viewModel.signOut() },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text("SignOut")
+                            }
                         }
                     }
                 }
