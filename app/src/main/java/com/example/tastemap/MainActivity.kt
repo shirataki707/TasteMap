@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
 import com.example.tastemap.data.api.places.PlacesApiDetailRequest
 import com.example.tastemap.data.api.places.PlacesApiIdRequest
+import com.example.tastemap.data.model.UserPreferences
 import com.example.tastemap.ui.theme.TasteMapTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -84,6 +85,26 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.align(Alignment.Center)
                             ) {
                                 Text("SignOut")
+                            }
+                        }
+
+                        val userName = "test"
+                        val userPreferences = UserPreferences("french", false)
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Button(
+                                onClick = { viewModel.registerUserDetails(userName, userPreferences) },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text("Register User Details")
+                            }
+                        }
+
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Button(
+                                onClick = { viewModel.fetchUserDetails() },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text("Fetch User Details")
                             }
                         }
                     }

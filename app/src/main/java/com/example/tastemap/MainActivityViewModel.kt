@@ -10,7 +10,9 @@ import com.example.tastemap.data.model.PlaceDetailResult
 import com.example.tastemap.data.model.PlaceId
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.data.model.Shop
+import com.example.tastemap.data.model.UserPreferences
 import com.example.tastemap.data.repository.AuthRepository
+import com.example.tastemap.data.repository.FirestoreRepository
 import com.example.tastemap.data.repository.HotPepperApiRepository
 import com.example.tastemap.data.repository.PlacesApiRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +27,7 @@ class MainActivityViewModel @Inject constructor(
     private val hotPepperApiRepository: HotPepperApiRepository,
     private val placesApiRepository: PlacesApiRepository,
     private val authRepository: AuthRepository,
+    private val firestoreRepository: FirestoreRepository,
     private val auth: FirebaseAuth
 ): ViewModel() {
 
@@ -92,6 +95,7 @@ class MainActivityViewModel @Inject constructor(
             password,
             onSuccess = {
                 Timber.d("signUp success")
+                // [TODO] ユーザ名，ユーザの好みをデータベースに登録
                 Timber.d("currentUser: ${auth.currentUser}") },
             onFailure = { Timber.d("signUp failure")}
         )
@@ -111,6 +115,25 @@ class MainActivityViewModel @Inject constructor(
     fun signOut() {
         authRepository.signOut()
         Timber.d("currentUser: ${auth.currentUser}")
+    }
+
+    fun registerUserDetails(userName: String, userPreferences: UserPreferences) {
+        firestoreRepository.addUserDetails(
+            userName,
+            userPreferences,
+            onSuccess = {
+                Timber.d("register user details success")
+                // [TODO] ログインまたはホーム画面に遷移
+            },
+            onFailure = { Timber.d("register user details failure")}
+        )
+    }
+
+    fun fetchUserDetails() {
+        firestoreRepository.getUserDetails(
+            onSuccess = { name, preferences -> Timber.d("user: $name, preferences: $preferences")},
+            onFailure = { Timber.d("Error") }
+        )
     }
 
 }
