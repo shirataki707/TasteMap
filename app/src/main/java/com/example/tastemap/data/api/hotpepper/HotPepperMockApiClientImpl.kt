@@ -24,7 +24,7 @@ class HotPepperMockApiClientImpl @Inject constructor(): HotPepperApiClient {
                     name = "居酒屋",
                     catch = "ボリューム◎大満足のコースが人気♪"
                 ),
-                capacity = 60,
+                capacity = "60",
                 urls = Urls(
                     pc = "https://www.hotpepper.jp/strJ000569668/?vos=nhppalsa000016"
                 ),
@@ -41,7 +41,7 @@ class HotPepperMockApiClientImpl @Inject constructor(): HotPepperApiClient {
                     name = "焼肉・ホルモン",
                     catch = "12/31～1/3ランチメニュー行っておりません"
                 ),
-                capacity = 138,
+                capacity = "138",
                 urls = Urls(
                     pc = "https://www.hotpepper.jp/strJ000964470/?vos=nhppalsa000016"
                 ),

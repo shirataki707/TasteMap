@@ -9,7 +9,7 @@ data class Shop(
     val lat: Double,
     val lng: Double,
     val genre: Genre,
-    val capacity: Int,
+    val capacity: String,
     val urls: Urls,
     val open: String,
     val close: String,

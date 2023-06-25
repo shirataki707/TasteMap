@@ -34,22 +34,22 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-//                        val request = HotPepperApiRequest(
-//                            lat = 33.652294,
-//                            lng = 130.672144,
-//                            range = 5,
-//                            keyword = "",
-//                            order = 4,
-//                            count = 10
-//                        )
+                        val request = HotPepperApiRequest(
+                            lat = 33.652294,
+                            lng = 130.672144,
+                            range = 5,
+                            keyword = "",
+                            order = 4,
+                            count = 10
+                        )
 //                        val request = PlacesApiIdRequest(
 //                            input = "居酒家 ぐらんま"
 //                        )
-                        val request = PlacesApiDetailRequest(
-                            placeId = "ChIJT76cjUV-QTURQvOgzC3xlVk"
-                        )
+//                        val request = PlacesApiDetailRequest(
+//                            placeId = "ChIJT76cjUV-QTURQvOgzC3xlVk"
+//                        )
                         Button(
-                            onClick = { viewModel.fetchPlaceDetail(request) },
+                            onClick = { viewModel.fetchRestaurants(request, true) },
                             modifier = Modifier.align(Alignment.Center)
                         ) {
                             Text("API call")
