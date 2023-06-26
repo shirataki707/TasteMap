@@ -1,5 +1,6 @@
 package com.example.tastemap.di
 
+import com.example.tastemap.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
