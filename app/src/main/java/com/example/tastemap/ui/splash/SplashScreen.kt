@@ -21,7 +21,7 @@ fun SplashScreen(viewModel: SplashViewModel, navController: NavHostController) {
     var isUserLoggedIn by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = viewModel) {
-        delay(3000) // delay for 3 seconds
+        delay(1000) // delay for 3 seconds
         val loggedIn = viewModel.isUserLoggedIn()
         isUserLoggedIn = loggedIn
         if (loggedIn) {

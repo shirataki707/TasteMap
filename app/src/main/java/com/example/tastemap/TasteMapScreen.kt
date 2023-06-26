@@ -23,6 +23,7 @@ import com.example.tastemap.ui.registration.RegistrationScreen
 import com.example.tastemap.ui.signin.SignInScreen
 import com.example.tastemap.ui.signin.SignInViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tastemap.ui.registration.RegistrationViewModel
 import com.example.tastemap.ui.splash.SplashScreen
 import com.example.tastemap.ui.splash.SplashViewModel
 
@@ -60,8 +61,10 @@ fun TasteMapApp(
                 onSignInButtonClicked = { navController.navigate(TasteMapScreen.Home.name) })
         }
 
-        composable(route = TasteMapScreen.Registration.name) {
+        composable(route = TasteMapScreen.Registration.name) { backStackEntry ->
+            val registrationViewModel = hiltViewModel<RegistrationViewModel>(backStackEntry)
             RegistrationScreen(
+                registrationViewModel,
                 onPopBackButtonClicked = { navController.navigateUp() },
                 onRegisterButtonClicked = { navController.navigate(TasteMapScreen.Home.name) })
         }

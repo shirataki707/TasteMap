@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tastemap.MainActivityViewModel
+import com.example.tastemap.ui.components.EmailTextField
+import com.example.tastemap.ui.components.PasswordTextField
 import com.example.tastemap.ui.theme.TasteMapTheme
 
 @Composable
@@ -77,39 +79,6 @@ fun SignInScreen(
 
         }
     }
-}
-
-
-@Composable
-fun PasswordTextField(
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    modifier: Modifier
-) {
-    @OptIn(ExperimentalMaterial3Api::class)
-    TextField(
-        value = password,
-        onValueChange = onPasswordChange,
-        label = { Text("Enter password") },
-        modifier = modifier.widthIn(min = 250.dp),
-        visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-    )
-}
-
-@Composable
-fun EmailTextField(
-    email: String,
-    onEmailChange: (String) -> Unit,
-    modifier: Modifier
-) {
-    @OptIn(ExperimentalMaterial3Api::class)
-    TextField(
-        value = email,
-        onValueChange = onEmailChange,
-        label = { Text("Enter Email") },
-        modifier = modifier.widthIn(min = 250.dp)
-    )
 }
 
 @Preview
