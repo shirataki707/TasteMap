@@ -15,6 +15,7 @@ class SignInViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun signIn(email: String, password: String, onSignInSuccess: () -> Unit) {
+        // [TODO] email, password null or empty check
         authRepository.signIn(
             email,
             password,

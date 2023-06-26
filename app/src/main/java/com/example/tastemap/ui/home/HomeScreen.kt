@@ -12,12 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
 import com.example.tastemap.TasteMapApp
 import com.example.tastemap.ui.theme.TasteMapTheme
 
 @Composable
 fun HomeScreen(
+    viewModel: HomeViewModel = viewModel(),
+    onSignOutClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -25,7 +28,14 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
+        Button(
+            onClick = {
+                viewModel.signOut()
+                onSignOutClicked()
+            }
+        ) {
+            Text("Sign Out")
+        }
     }
 }
 
@@ -33,7 +43,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     TasteMapTheme {
-        HomeScreen()
+        HomeScreen(onSignOutClicked = {} )
     }
     
 }

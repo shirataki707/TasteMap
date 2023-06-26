@@ -1,6 +1,8 @@
 package com.example.tastemap.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.Exception
@@ -48,5 +50,11 @@ class AuthRepository @Inject constructor(
 
     fun signOut() {
         auth.signOut()
+    }
+
+    suspend fun isUserLoggedIn(): Boolean {
+        return withContext(Dispatchers.IO) {
+            auth.currentUser != null
+        }
     }
 }
