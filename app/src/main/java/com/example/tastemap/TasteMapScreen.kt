@@ -54,15 +54,21 @@ fun TasteMapApp(
             SignInScreen(
                 signInViewModel,
                 onRegisterButtonClicked = { navController.navigate(TasteMapScreen.Registration.name) },
-                onSignInButtonClicked = { navController.navigate(TasteMapScreen.Home.name) })
+                onSignInButtonClicked = {
+                    navController.navigate(TasteMapScreen.Home.name) {
+                        popUpTo(TasteMapScreen.SignIn.name) { inclusive = true }
+                    } })
         }
 
+        // [TODO] 新規登録後のホーム画面で戻るボタンを押すとなぜか登録画面にもどる
         composable(route = TasteMapScreen.Registration.name) { backStackEntry ->
             val registrationViewModel = hiltViewModel<RegistrationViewModel>(backStackEntry)
             RegistrationScreen(
                 registrationViewModel,
                 onPopBackButtonClicked = { navController.navigateUp() },
-                onRegisterButtonClicked = { navController.navigate(TasteMapScreen.Home.name) })
+                onRegisterButtonClicked = { navController.navigate(TasteMapScreen.Home.name) {
+                    popUpTo(TasteMapScreen.Registration.name) { inclusive = true }
+                } })
         }
 
         composable(route = TasteMapScreen.Home.name) { backStackEntry ->
