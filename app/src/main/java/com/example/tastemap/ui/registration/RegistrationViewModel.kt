@@ -1,16 +1,19 @@
 package com.example.tastemap.ui.registration
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tastemap.data.model.UserPreferences
 import com.example.tastemap.data.repository.AuthRepository
 import com.example.tastemap.data.repository.FirestoreRepository
+import com.example.tastemap.domain.RegisterAccountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val firestoreRepository: FirestoreRepository
+    private val registerAccountUseCase: RegisterAccountUseCase
 ) : ViewModel() {
 
     fun RegisterAccount(
@@ -24,24 +27,14 @@ class RegistrationViewModel @Inject constructor(
             genre = "",
             isSmoker = isSmoker
         )
-        authRepository.createAccount(
-            email = email,
-            password = password,
-            onSuccess = { RegisterUserDetail(userName, userPreferences, onRegisterSuccess) },
-            onFailure = {}
-        )
-    }
-
-    private fun RegisterUserDetail(
-        userName: String,
-        userPreferences: UserPreferences,
-        onRegisterSuccess: () -> Unit
-    ) {
-        firestoreRepository.addUserDetails(
-            userName = userName,
-            userPreferences = userPreferences,
-            onSuccess = { onRegisterSuccess() },
-            onFailure = {}
-        )
+        viewModelScope.launch {
+            registerAccountUseCase(
+                userName,
+                email,
+                password,
+                userPreferences,
+                onRegisterSuccess
+            )
+        }
     }
 }

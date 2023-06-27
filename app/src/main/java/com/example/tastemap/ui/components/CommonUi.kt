@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable
 fun PasswordTextField(
@@ -42,3 +44,19 @@ fun EmailTextField(
         modifier = modifier.widthIn(min = 250.dp)
     ))
 }
+
+//@OptIn(ExperimentalPermissionsApi::class)
+//@Composable
+//fun PermissionRequest() {
+//    val permissionState = rememberPermissionState(Manifest.permission.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION)
+//    when {
+//        permissionState.hasPermission -> Text("Granted!")
+//        permissionState.shouldShowRationale -> PermissionRationaleDialog {
+//            permissionState.launchPermissionRequest()
+//        }
+//        permissionState.permissionRequested -> Text("Denied...")
+//        else -> SideEffect {
+//            permissionState.launchPermissionRequest()
+//        }
+//    }
+//}

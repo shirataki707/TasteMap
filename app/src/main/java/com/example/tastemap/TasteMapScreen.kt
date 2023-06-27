@@ -50,10 +50,6 @@ fun TasteMapApp(
         }
 
         composable(route = TasteMapScreen.SignIn.name) { backStackEntry ->
-            // [TODO] よくわからんから調べよう
-//            val signInEntry = remember(backStackEntry) {
-//                navController.getBackStackEntry(TasteMapScreen.SignIn.name)
-//            }
             val signInViewModel = hiltViewModel<SignInViewModel>(backStackEntry)
             SignInScreen(
                 signInViewModel,
@@ -71,10 +67,15 @@ fun TasteMapApp(
 
         composable(route = TasteMapScreen.Home.name) { backStackEntry ->
             val homeViewModel = hiltViewModel<HomeViewModel>(backStackEntry)
-            // [TODO] ただの遷移だとスタックに残りそう
             HomeScreen(
                 homeViewModel,
-                onSignOutClicked = { navController.navigate(TasteMapScreen.SignIn.name) }
+                onSignOutClicked = {
+                    navController.navigate(TasteMapScreen.SignIn.name) {
+                        popUpTo(TasteMapScreen.Home.name) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     }

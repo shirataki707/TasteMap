@@ -1,5 +1,10 @@
 package com.example.tastemap.ui.home
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,14 +36,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.example.tastemap.R
 import com.example.tastemap.TasteMapApp
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
+import com.example.tastemap.data.model.Location
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.ui.theme.TasteMapTheme
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -80,7 +96,7 @@ fun HomeScreen(
             )
             Button(
                 onClick = {
-                    viewModel.fetchRestaurants(
+                    viewModel.searchRestaurants(
                         request = dummyRequest,
                         isSortSelected = true,
                         onSuccess = { response -> restaurants = response }
@@ -89,7 +105,7 @@ fun HomeScreen(
             ) {
                 Text("Search Restaurants")
             }
-            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
+//            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
             RestaurantsList(restaurants = restaurants)
         }
     }
@@ -107,16 +123,56 @@ fun RestaurantsList(restaurants: List<Restaurant>) {
 
 @Composable
 fun Restaurant(restaurantDetail: Restaurant) {
-//    Column(modifier = Modifier.padding(4.dp)) {
-//        Text("${restaurantDetail.name}")
-//        Text("star: ${restaurantDetail.rating}, reviews: ${restaurantDetail.usrReviews}")
-//    }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     Card(modifier = Modifier
         .padding(16.dp)
         .wrapContentSize()
+        .clickable {
+//            coroutineScope.launch {
+//                val gmmIntentUri = Uri.parse("geo:0,0?q=${restaurantDetail.name}")
+//                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+//                mapIntent.setPackage("com.google.android.apps.maps")
+//
+//                if (mapIntent.resolveActivity(context.packageManager) != null) {
+//                    context.startActivity(mapIntent)
+//                } else {
+//                    // Show error message
+//                }
+//            }
+            coroutineScope.launch {
+                // [TODO] ここを現在地の座標にする必要がある
+                // 位置情報をアプリが取得できるようにパーミションを与え，現在地を設定
+                val start = Location(33.6537617, 130.6729035)
+                val destination = restaurantDetail.location
+                openGoogleMap(context, start, destination)
+            }
+        }
     ) {
         RestaurantContent(restaurantDetail)
     }
+}
+
+private fun openGoogleMap(context: Context, start: Location, destination: Location) {
+    val intent = Intent()
+    intent.action = Intent.ACTION_VIEW
+    intent.setClassName(
+        "com.google.android.apps.maps",
+        "com.google.android.maps.MapsActivity"
+    )
+
+    // 移動手段：電車:r, 車:d, 歩き:w
+    val transitOptions = listOf("r", "d", "w")
+
+    // 出発地(緯度，経度), 目的地(緯度，経度), 交通手段
+    val uri = String.format(
+        Locale.US,
+        "http://maps.google.com/maps?saddr=%s,%s&daddr=%s,%s&dirflg=%s",
+        start.latitude, start.longitude, destination.latitude, destination.longitude, transitOptions[1]
+    )
+    intent.data = Uri.parse(uri)
+    context.startActivity(intent)
 }
 
 @Composable
@@ -137,7 +193,7 @@ fun RestaurantContent(restaurantDetail: Restaurant) {
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
-                "star: ${restaurantDetail.rating}, reviews: ${restaurantDetail.usrReviews}",
+                "star: ${restaurantDetail.rating}, reviews: ${restaurantDetail.userReviews}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -148,7 +204,7 @@ fun RestaurantContent(restaurantDetail: Restaurant) {
 @Composable
 fun RestaurantPReview() {
     TasteMapTheme {
-        Restaurant(Restaurant("test", 4.2, 300))
+//        Restaurant(Restaurant("test", 4.2, 300))
     }
 }
 

@@ -89,51 +89,51 @@ class MainActivityViewModel @Inject constructor(
         return shopList
     }
 
-    fun signUp(email: String, password: String) {
-        authRepository.createAccount(
-            email,
-            password,
-            onSuccess = {
-                Timber.d("signUp success")
-                // [TODO] ユーザ名，ユーザの好みをデータベースに登録
-                Timber.d("currentUser: ${auth.currentUser}") },
-            onFailure = { Timber.d("signUp failure")}
-        )
-    }
+//    fun signUp(email: String, password: String) {
+//        authRepository.createAccount(
+//            email,
+//            password,
+//            onSuccess = {
+//                Timber.d("signUp success")
+//                // [TODO] ユーザ名，ユーザの好みをデータベースに登録
+//                Timber.d("currentUser: ${auth.currentUser}") },
+//            onFailure = { Timber.d("signUp failure")}
+//        )
+//    }
 
-    fun signIn(email: String, password: String) {
-        authRepository.signIn(
-            email,
-            password,
-            onSuccess = {
-                Timber.d("signIn success")
-                Timber.d("currentUser: ${auth.currentUser}")},
-            onFailure = { Timber.d("signIn failure")}
-        )
-    }
+//    fun signIn(email: String, password: String) {
+//        authRepository.signIn(
+//            email,
+//            password,
+//            onSuccess = {
+//                Timber.d("signIn success")
+//                Timber.d("currentUser: ${auth.currentUser}")},
+//            onFailure = { Timber.d("signIn failure")}
+//        )
+//    }
 
-    fun signOut() {
-        authRepository.signOut()
-        Timber.d("currentUser: ${auth.currentUser}")
-    }
+//    fun signOut() {
+//        authRepository.signOut()
+//        Timber.d("currentUser: ${auth.currentUser}")
+//    }
 
-    fun registerUserDetails(userName: String, userPreferences: UserPreferences) {
-        firestoreRepository.addUserDetails(
-            userName,
-            userPreferences,
-            onSuccess = {
-                Timber.d("register user details success")
-                // [TODO] ログインまたはホーム画面に遷移
-            },
-            onFailure = { Timber.d("register user details failure")}
-        )
-    }
-
-    fun fetchUserDetails() {
-        firestoreRepository.getUserDetails(
-            onSuccess = { name, preferences -> Timber.d("user: $name, preferences: $preferences")},
-            onFailure = { Timber.d("Error") }
-        )
-    }
+//    fun registerUserDetails(userName: String, userPreferences: UserPreferences) {
+//        firestoreRepository.addUserDetails(
+//            userName,
+//            userPreferences,
+//            onSuccess = {
+//                Timber.d("register user details success")
+//                // [TODO] ログインまたはホーム画面に遷移
+//            },
+//            onFailure = { Timber.d("register user details failure")}
+//        )
+//    }
+//
+//    fun fetchUserDetails() {
+//        firestoreRepository.getUserDetails(
+//            onSuccess = { name, preferences -> Timber.d("user: $name, preferences: $preferences")},
+//            onFailure = { Timber.d("Error") }
+//        )
+//    }
 
 }

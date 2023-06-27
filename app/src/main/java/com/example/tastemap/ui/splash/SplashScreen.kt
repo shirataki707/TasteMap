@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -19,12 +20,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(viewModel: SplashViewModel, navController: NavHostController) {
     var isUserLoggedIn by remember { mutableStateOf(false) }
+//    val isUserLoggedIn by viewModel.isLoggedIn.collectAsState()
 
-    LaunchedEffect(key1 = viewModel) {
+    LaunchedEffect(key1 = isUserLoggedIn) {
         delay(1000) // delay for 3 seconds
-        val loggedIn = viewModel.isUserLoggedIn()
+        val loggedIn = viewModel.checkUserLoginStatus()
         isUserLoggedIn = loggedIn
-        if (loggedIn) {
+        if (isUserLoggedIn) {
             navController.navigate(TasteMapScreen.Home.name) {
                 popUpTo(TasteMapScreen.Splash.name) { inclusive = true }
             }
