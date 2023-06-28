@@ -1,9 +1,11 @@
 package com.example.tastemap.ui.home
 
 import com.example.tastemap.data.model.Restaurant
+import com.example.tastemap.data.model.UserPreferences
 
 data class HomeUiState(
     val userName: String = "",
+    val userPreferences: UserPreferences = UserPreferences(),
     val restaurants: List<Restaurant> = emptyList(),
     val event: Event = Event.Idle
 ) {

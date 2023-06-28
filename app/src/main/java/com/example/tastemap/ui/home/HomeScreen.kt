@@ -72,10 +72,6 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-//    LaunchedEffect(Unit) {
-//        viewModel.fetchUserDetails()
-//    }
-
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -91,13 +87,14 @@ fun HomeScreen(
             ) {
                 Text("Sign Out")
             }
+
             val dummyRequest = HotPepperApiRequest(
                 lat = 33.652294,
                 lng = 130.672144,
                 range = 5,
                 keyword = "",
                 order = 4,
-                count = 10
+                count = 100
             )
             Button(
                 onClick = {
@@ -117,7 +114,7 @@ fun HomeScreen(
                 FullScreenLoading()
             }
             is HomeUiState.Event.Failure -> {
-                ErrorDialog(event.error, viewModel.dismissError)
+                ErrorDialog("エラー", event.error, viewModel.dismissError)
             }
             else -> {}
         }

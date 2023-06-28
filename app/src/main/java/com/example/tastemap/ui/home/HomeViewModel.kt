@@ -14,6 +14,7 @@ import com.example.tastemap.data.model.PlaceDetailResult
 import com.example.tastemap.data.model.PlaceId
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.data.model.Shop
+import com.example.tastemap.data.model.UserPreferences
 import com.example.tastemap.data.repository.AuthRepository
 import com.example.tastemap.data.repository.FirestoreRepository
 import com.example.tastemap.data.repository.HotPepperApiRepository
@@ -53,8 +54,14 @@ class HomeViewModel @Inject constructor(
     ) {
         _uiState.value = uiState.value.copy(event = HomeUiState.Event.Loading)
         val onSuccess: (List<Restaurant>) -> Unit = { restaurants ->
+            if (restaurants.isEmpty()) {
+                val emptyMessage = "検索結果は0件でした。条件を変えて検索してください。"
+                _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(emptyMessage))
+            } else {
+                _uiState.value = uiState.value.copy(event = HomeUiState.Event.Success)
+            }
             _uiState.value = uiState.value.copy(restaurants = restaurants)
-            _uiState.value = uiState.value.copy(event = HomeUiState.Event.Success)
+
         }
         val onFailure: (String) -> Unit =  { error ->
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
@@ -69,10 +76,11 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchUserDetails() {
         _uiState.value = uiState.value.copy(event = HomeUiState.Event.Loading)
-        val onSuccess: (String) -> Unit = { name ->
+        val onSuccess: (String, UserPreferences) -> Unit = { name, preferences ->
             _uiState.value = uiState.value.copy(userName = name)
+            _uiState.value = uiState.value.copy(userPreferences = preferences)
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Success)
-            Timber.d("$name")
+            Timber.d("$name, $preferences")
         }
         val onFailure: (String) -> Unit =  { error ->
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))

@@ -19,15 +19,18 @@ class RegisterAccountUseCase @Inject constructor(
         email: String,
         password: String,
         userPreferences: UserPreferences,
-        onRegisterSuccess: () -> Unit
+        onRegisterSuccess: () -> Unit,
+        onRegisterFailure: (String) -> Unit
     ) {
         // アカウントの新規登録に成功後，好み情報を登録(registerUserDetail)
         authRepository.createAccount(
             email = email,
             password = password,
             onSuccess = {
-                    registerUserDetail(userName, userPreferences, onRegisterSuccess)},
-            onFailure = {}
+                    registerUserDetail(userName, userPreferences, onRegisterSuccess, onRegisterFailure)},
+            onFailure = { e ->
+                onRegisterFailure("アカウントの登録に失敗しました。: ${e.message}")
+            }
         )
     }
 
@@ -36,13 +39,15 @@ class RegisterAccountUseCase @Inject constructor(
     private fun registerUserDetail(
         userName: String,
         userPreferences: UserPreferences,
-        onRegisterSuccess: () -> Unit
+        onRegisterSuccess: () -> Unit,
+        onRegisterFailure: (String) -> Unit
     ) {
         firestoreRepository.addUserDetails(
             userName = userName,
             userPreferences = userPreferences,
             onSuccess = { onRegisterSuccess() },
-            onFailure = {}
+            onFailure = { e ->
+                onRegisterFailure("好み情報のデータベースへの登録に失敗しました。: ${e.message}") }
         )
     }
 

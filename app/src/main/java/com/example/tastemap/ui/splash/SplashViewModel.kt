@@ -14,17 +14,8 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase
 ) : ViewModel() {
-//    private val _isLoggedIn = MutableStateFlow(false)
-//    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
-//
-//    init {
-//        checkUserLoginStatus()
-//    }
 
     fun checkUserLoginStatus(): Boolean {
-//        viewModelScope.launch {
-//            _isLoggedIn.value = isUserLoggedInUseCase()
-//        }
         return isUserLoggedInUseCase()
     }
 }

@@ -23,12 +23,13 @@ fun FullScreenLoading() {
 
 @Composable
 fun ErrorDialog(
+    titleMessage: String,
     errorMessage: String,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(text = "Error") },
+        title = { Text(text = titleMessage) },
         text = { Text(text = errorMessage) },
         confirmButton = {
             TextButton(

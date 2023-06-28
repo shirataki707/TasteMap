@@ -60,9 +60,10 @@ class FirestoreRepository @Inject constructor(
                         val userPreferencesMap = document.get("preferences")
 
                         if (userName != null && userPreferencesMap is Map<*, *>) {
+                            // firestoreではデフォルトの数値はLongっぽいから後でIntにキャスト
                             val userPreferences = UserPreferences(
-                                genre = userPreferencesMap["genre"] as? String ?: "",
-                                isSmoker = userPreferencesMap["isSmoker"] as? Boolean ?: false
+                                reviewPriorities = (userPreferencesMap["reviewPriorities"] as? Long ?: 0L).toInt(),
+                                smokingPriorities = (userPreferencesMap["smokingPriorities"] as? Long ?: 0L).toInt()
                             )
                             onSuccess(userName, userPreferences)
                         } else {

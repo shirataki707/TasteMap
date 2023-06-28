@@ -42,15 +42,19 @@ class SearchRestaurantsUseCase @Inject constructor(
                 // shopsの全ての飲食店のPlaceIDを取得
                 val placeIds: List<String> = fetchPlaceIds(scope, shops)
 
-                // すべてのPlaceIDに対して，お店の詳細情報を取得
-                val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, placeIds)
+                // 対応したPlaceIDがないお店は除く
 
-                // HotPepperとPlacesのレスポンスかrUIで使うお店情報を作成
+                val (filteredShops, filteredPlaceIds) = filterEmptyIDs(shops, placeIds)
+
+                // すべてのPlaceIDに対して，お店の詳細情報を取得
+                val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, filteredPlaceIds)
+
+                // HotPepperとPlacesのレスポンスからUIで使うお店情報を作成
                 val restaurants: List<Restaurant> = createRestaurantsFromResponse(shops, placeDetails)
 
                 onSuccess(restaurants)
 
-                Timber.d("shops: $shops, scores: $placeDetails")
+                Timber.d("shops: $filteredShops, scores: $placeDetails")
             } else {
                 // [TODO] 5件程度にして返す
                 val restaurants: List<Restaurant> = listOf()
@@ -62,6 +66,12 @@ class SearchRestaurantsUseCase @Inject constructor(
             onFailure("飲食店情報の取得に失敗しました: ${e.message}")
         }
 
+    }
+
+    private fun filterEmptyIDs(shops: List<Shop>, placeIds: List<String>): Pair<List<Shop>, List<String>> {
+        val zipped = shops.zip(placeIds)
+        val filtered = zipped.filter { (_, id) -> id.isNotEmpty() }
+        return filtered.unzip()
     }
 
     // HotPepperAPIを用いて，周辺のお店を検索して返す．
@@ -86,6 +96,8 @@ class SearchRestaurantsUseCase @Inject constructor(
         shopsResult.onSuccess { response ->
             // 好み情報を反映したレストランのみ抽出
             shops = applyPreference(response.results.shop)
+            // シャッフルした後20件程度にして返す．20件に満たない場合はリスト全体
+            shops = shops.shuffled().take(20)
         }
         shopsResult.onFailure { Timber.e(it.toString()) }
 
@@ -97,6 +109,7 @@ class SearchRestaurantsUseCase @Inject constructor(
         scope: CoroutineScope,
         request: PlacesApiIdRequest
     ): Result<PlacesApiIdResponse> {
+        // 対応するPlaceIDがないときもある
         return withContext(scope.coroutineContext) {
             placesApiRepository.fetchPlaceId(request)
         }
@@ -146,7 +159,7 @@ class SearchRestaurantsUseCase @Inject constructor(
     }
 
     // HotPepperの結果(shops)とPlaceDetailを用いて，Restaurantを作成
-    fun createRestaurantsFromResponse(
+    private fun createRestaurantsFromResponse(
         shops: List<Shop>,
         placeDetails: List<PlaceDetailResult>
     ): List<Restaurant> {
