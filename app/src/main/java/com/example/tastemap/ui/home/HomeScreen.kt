@@ -36,9 +36,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,6 +56,8 @@ import com.example.tastemap.TasteMapApp
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
 import com.example.tastemap.data.model.Location
 import com.example.tastemap.data.model.Restaurant
+import com.example.tastemap.ui.components.ErrorDialog
+import com.example.tastemap.ui.components.FullScreenLoading
 import com.example.tastemap.ui.theme.TasteMapTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -62,12 +70,13 @@ fun HomeScreen(
     onSignOutClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var userName by remember { mutableStateOf("") }
-    var restaurants by remember { mutableStateOf(emptyList<Restaurant>()) }
+//    var userName by remember { mutableStateOf("") }
+//    var restaurants by remember { mutableStateOf(emptyList<Restaurant>()) }
+    val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserDetails(
-            onSuccess = { name -> userName = name }
+//            onSuccess = { name -> userName = name }
         )
     }
 
@@ -77,7 +86,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("User Name: $userName")
+            Text("User Name: ${uiState.userName}")
             Button(
                 onClick = {
                     viewModel.signOut()
@@ -98,19 +107,29 @@ fun HomeScreen(
                 onClick = {
                     viewModel.searchRestaurants(
                         request = dummyRequest,
-                        isSortSelected = true,
-                        onSuccess = { response -> restaurants = response }
+                        isSortSelected = true
                     )
                 }
             ) {
                 Text("Search Restaurants")
             }
 //            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
-            RestaurantsList(restaurants = restaurants)
+            RestaurantsList(restaurants = uiState.restaurants)
+        }
+        when (val event = uiState.event) {
+            is HomeUiState.Event.Loading -> {
+                FullScreenLoading()
+            }
+            is HomeUiState.Event.Failure -> {
+                ErrorDialog(event.error, viewModel.dismissError)
+            }
+            else -> {}
         }
     }
 
 }
+
+
 
 @Composable
 fun RestaurantsList(restaurants: List<Restaurant>) {
@@ -130,17 +149,6 @@ fun Restaurant(restaurantDetail: Restaurant) {
         .padding(16.dp)
         .wrapContentSize()
         .clickable {
-//            coroutineScope.launch {
-//                val gmmIntentUri = Uri.parse("geo:0,0?q=${restaurantDetail.name}")
-//                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-//                mapIntent.setPackage("com.google.android.apps.maps")
-//
-//                if (mapIntent.resolveActivity(context.packageManager) != null) {
-//                    context.startActivity(mapIntent)
-//                } else {
-//                    // Show error message
-//                }
-//            }
             coroutineScope.launch {
                 // [TODO] ここを現在地の座標にする必要がある
                 // 位置情報をアプリが取得できるようにパーミションを与え，現在地を設定

@@ -28,30 +28,38 @@ class SearchRestaurantsUseCase @Inject constructor(
         scope: CoroutineScope,
         request: HotPepperApiRequest,
         isSortSelected: Boolean,
-        onSuccess: (List<Restaurant>) -> Unit
+        onSuccess: (List<Restaurant>) -> Unit,
+        onFailure: (String) -> Unit
     ) {
-        // HotPepperAPIからN件のレストランを検索して好みのものだけ返す
-        val shops: List<Shop> = fetchPreferenceShops(scope, request)
+        try {
+            // HotPepperAPIからN件のレストランを検索して好みのものだけ返す
+            val shops: List<Shop> = fetchPreferenceShops(scope, request)
 
-        Timber.d("shops: $shops")
+            Timber.d("shops: $shops")
 
-        // Googleの星とレビュー数でソートする場合
-        if (isSortSelected) {
-            // shopsの全ての飲食店のPlaceIDを取得
-            val placeIds: List<String> = fetchPlaceIds(scope, shops)
+            // Googleの星とレビュー数でソートする場合
+            if (isSortSelected) {
+                // shopsの全ての飲食店のPlaceIDを取得
+                val placeIds: List<String> = fetchPlaceIds(scope, shops)
 
-            // すべてのPlaceIDに対して，お店の詳細情報を取得
-            val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, placeIds)
+                // すべてのPlaceIDに対して，お店の詳細情報を取得
+                val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, placeIds)
 
-            // HotPepperとPlacesのレスポンスかrUIで使うお店情報を作成
-            val restaurants: List<Restaurant> = createRestaurantsFromResponse(shops, placeDetails)
+                // HotPepperとPlacesのレスポンスかrUIで使うお店情報を作成
+                val restaurants: List<Restaurant> = createRestaurantsFromResponse(shops, placeDetails)
 
-            onSuccess(restaurants)
+                onSuccess(restaurants)
 
-            Timber.d("shops: $shops, scores: $placeDetails")
-        } else {
-            // [TODO] 5件程度にして返す
-            val restaurants: List<Restaurant> = listOf()
+                Timber.d("shops: $shops, scores: $placeDetails")
+            } else {
+                // [TODO] 5件程度にして返す
+                val restaurants: List<Restaurant> = listOf()
+
+                onSuccess(restaurants)
+            }
+
+        } catch (e: Exception) {
+            onFailure("飲食店情報の取得に失敗しました: ${e.message}")
         }
 
     }
