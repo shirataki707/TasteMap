@@ -41,6 +41,12 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState get() = _uiState.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            fetchUserDetails()
+        }
+    }
+
     fun searchRestaurants(
         request: HotPepperApiRequest,
         isSortSelected: Boolean,
@@ -61,14 +67,16 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch { signOutUseCase() }
     }
 
-    fun fetchUserDetails() {
+    private fun fetchUserDetails() {
         _uiState.value = uiState.value.copy(event = HomeUiState.Event.Loading)
         val onSuccess: (String) -> Unit = { name ->
             _uiState.value = uiState.value.copy(userName = name)
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Success)
+            Timber.d("$name")
         }
         val onFailure: (String) -> Unit =  { error ->
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
+            Timber.e("fetchuserdetail error")
         }
         viewModelScope.launch {
             fetchUserDetailsUseCase(onSuccess, onFailure)

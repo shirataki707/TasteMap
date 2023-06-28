@@ -17,7 +17,7 @@ class FetchUserDetailsUseCase @Inject constructor(
                     Timber.d("user: $name, preferences: $preferences")
                     onSuccess(name)
                 },
-                onFailure = { Timber.d("Error") }
+                onFailure = { e -> onFailure(e.message.toString()) }
             )
         } catch (e: Exception) {
             onFailure(e.message.toString())

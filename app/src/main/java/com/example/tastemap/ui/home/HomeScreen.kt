@@ -70,15 +70,11 @@ fun HomeScreen(
     onSignOutClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-//    var userName by remember { mutableStateOf("") }
-//    var restaurants by remember { mutableStateOf(emptyList<Restaurant>()) }
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchUserDetails(
-//            onSuccess = { name -> userName = name }
-        )
-    }
+//    LaunchedEffect(Unit) {
+//        viewModel.fetchUserDetails()
+//    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
