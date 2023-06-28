@@ -39,13 +39,23 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
@@ -64,63 +74,150 @@ import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeAppBar(
+    onProfileButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = { Text(stringResource(id = R.string.app_name))},
+        colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        actions = {
+            IconButton(onClick = onProfileButtonClicked) {
+                Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
+            }
+        },
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     onSignOutClicked: () -> Unit,
+    onProfileButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text("User Name: ${uiState.userName}")
-            Button(
-                onClick = {
-                    viewModel.signOut()
-                    onSignOutClicked()
-                }
-            ) {
-                Text("Sign Out")
-            }
-
-            val dummyRequest = HotPepperApiRequest(
-                lat = 33.652294,
-                lng = 130.672144,
-                range = 5,
-                keyword = "",
-                order = 4,
-                count = 100
-            )
-            Button(
-                onClick = {
-                    viewModel.searchRestaurants(
-                        request = dummyRequest,
-                        isSortSelected = true
-                    )
-                }
-            ) {
-                Text("Search Restaurants")
-            }
-//            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
-            RestaurantsList(restaurants = uiState.restaurants)
+    Scaffold(
+        topBar = {
+            HomeAppBar(onProfileButtonClicked)
         }
-        when (val event = uiState.event) {
-            is HomeUiState.Event.Loading -> {
-                FullScreenLoading()
+    ) { innerPadding ->
+        Surface(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("User Name: ${uiState.userName}")
+                Button(
+                    onClick = {
+                        viewModel.signOut()
+                        onSignOutClicked()
+                    }
+                ) {
+                    Text("Sign Out")
+                }
+
+                val dummyRequest = HotPepperApiRequest(
+                    lat = 33.652294,
+                    lng = 130.672144,
+                    range = 5,
+                    keyword = "",
+                    order = 4,
+                    count = 100
+                )
+                Button(
+                    onClick = {
+                        viewModel.searchRestaurants(
+                            request = dummyRequest,
+                            isSortSelected = true
+                        )
+                    }
+                ) {
+                    Text("Search Restaurants")
+                }
+//            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
+                RestaurantsList(restaurants = uiState.restaurants)
             }
-            is HomeUiState.Event.Failure -> {
-                ErrorDialog("エラー", event.error, viewModel.dismissError)
+            when (val event = uiState.event) {
+                is HomeUiState.Event.Loading -> {
+                    FullScreenLoading()
+                }
+                is HomeUiState.Event.Failure -> {
+                    ErrorDialog("エラー", event.error, viewModel.dismissError)
+                }
+                else -> {}
             }
-            else -> {}
         }
     }
 
 }
+
+//@Composable
+//fun HomeScreen(
+//    viewModel: HomeViewModel = viewModel(),
+//    onSignOutClicked: () -> Unit,
+//    modifier: Modifier = Modifier
+//) {
+//    val uiState by viewModel.uiState.collectAsState()
+//
+//    Surface(modifier = Modifier.fillMaxSize()) {
+//        Column(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            Text("User Name: ${uiState.userName}")
+//            Button(
+//                onClick = {
+//                    viewModel.signOut()
+//                    onSignOutClicked()
+//                }
+//            ) {
+//                Text("Sign Out")
+//            }
+//
+//            val dummyRequest = HotPepperApiRequest(
+//                lat = 33.652294,
+//                lng = 130.672144,
+//                range = 5,
+//                keyword = "",
+//                order = 4,
+//                count = 100
+//            )
+//            Button(
+//                onClick = {
+//                    viewModel.searchRestaurants(
+//                        request = dummyRequest,
+//                        isSortSelected = true
+//                    )
+//                }
+//            ) {
+//                Text("Search Restaurants")
+//            }
+////            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
+//            RestaurantsList(restaurants = uiState.restaurants)
+//        }
+//        when (val event = uiState.event) {
+//            is HomeUiState.Event.Loading -> {
+//                FullScreenLoading()
+//            }
+//            is HomeUiState.Event.Failure -> {
+//                ErrorDialog("エラー", event.error, viewModel.dismissError)
+//            }
+//            else -> {}
+//        }
+//    }
+//
+//}
 
 
 
@@ -213,7 +310,7 @@ fun RestaurantPReview() {
 @Composable
 fun HomeScreenPreview() {
     TasteMapTheme {
-        HomeScreen(onSignOutClicked = {} )
+//        HomeScreen(onSignOutClicked = {} )
     }
     
 }

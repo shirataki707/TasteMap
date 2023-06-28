@@ -23,6 +23,8 @@ import com.example.tastemap.ui.registration.RegistrationScreen
 import com.example.tastemap.ui.signin.SignInScreen
 import com.example.tastemap.ui.signin.SignInViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tastemap.ui.profile.ProfileScreen
+import com.example.tastemap.ui.profile.ProfileViewModel
 import com.example.tastemap.ui.registration.RegistrationViewModel
 import com.example.tastemap.ui.splash.SplashScreen
 import com.example.tastemap.ui.splash.SplashViewModel
@@ -31,7 +33,8 @@ enum class TasteMapScreen {
     Home,
     SignIn,
     Registration,
-    Splash
+    Splash,
+    Profile
 }
 
 @Composable
@@ -81,8 +84,18 @@ fun TasteMapApp(
                             inclusive = true
                         }
                     }
+                },
+                onProfileButtonClicked = {
+                    navController.navigate(TasteMapScreen.Profile.name)
                 }
             )
+        }
+
+        composable(route = TasteMapScreen.Profile.name) { backStackEntry ->
+            val profileViewModel = hiltViewModel<ProfileViewModel>(backStackEntry)
+            ProfileScreen(
+                profileViewModel,
+                navigateUp = { navController.navigateUp() })
         }
     }
 }
