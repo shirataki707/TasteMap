@@ -14,8 +14,9 @@ data class HotPepperApiRequest(
     val lat: Double,
     val lng: Double,
     val range: Int,
+    val genre: String,
     val keyword: String,
-    val order: Int,
-    val count: Int,
+    val order: Int = 4,     // あとでシャッフルするからあんまり意味はないけど，100件以上結果がある時に有効
+    val count: Int = 100,   // 100件を上限に取得して後でフィルタをかける
     val format: String = "json"
 )

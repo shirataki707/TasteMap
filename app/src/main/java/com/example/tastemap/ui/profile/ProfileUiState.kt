@@ -1,16 +1,11 @@
-package com.example.tastemap.ui.home
+package com.example.tastemap.ui.profile
 
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.data.model.UserPreferences
 
-data class HomeUiState(
+data class ProfileUiState(
     val userName: String = "",
     val userPreferences: UserPreferences = UserPreferences(),
-    val restaurants: List<Restaurant> = emptyList(),
-    val searchRangeIndex: Int = 2,
-    val isSortOptionSelected: Boolean = true,
-    val keyword: String = "",
-    val genreIndex: Int = 0,
     val event: Event = Event.Idle
 ) {
     sealed class Event {

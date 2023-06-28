@@ -13,6 +13,7 @@ class HotPepperApiClientImpl @Inject constructor(
             lat = request.lat,
             lng = request.lng,
             range = request.range,
+            genre = request.genre,
             keyword = request.keyword,
             order = request.order,
             count = request.count,

@@ -39,6 +39,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.AlertDialog
@@ -48,6 +49,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
@@ -66,8 +68,10 @@ import com.example.tastemap.TasteMapApp
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
 import com.example.tastemap.data.model.Location
 import com.example.tastemap.data.model.Restaurant
+import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.ErrorDialog
 import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.Switch
 import com.example.tastemap.ui.theme.TasteMapTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -99,7 +103,6 @@ fun HomeAppBar(
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
-    onSignOutClicked: () -> Unit,
     onProfileButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -110,36 +113,43 @@ fun HomeScreen(
             HomeAppBar(onProfileButtonClicked)
         }
     ) { innerPadding ->
-        Surface(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Surface(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("User Name: ${uiState.userName}")
-                Button(
-                    onClick = {
-                        viewModel.signOut()
-                        onSignOutClicked()
-                    }
-                ) {
-                    Text("Sign Out")
-                }
 
-                val dummyRequest = HotPepperApiRequest(
-                    lat = 33.652294,
-                    lng = 130.672144,
-                    range = 5,
-                    keyword = "",
-                    order = 4,
-                    count = 100
+//                @OptIn(ExperimentalMaterial3Api::class)
+//                TextField(
+//                    value = uiState.keyword,
+//                    onValueChange = { keyword -> viewModel.updateKeyword(keyword) },
+//                    label = { Text("検索キーワード (任意)") }
+//                )
+
+                DropdownList(
+                    caption = "検索ジャンル",
+                    items = viewModel.genres,
+                    selectedIndex = uiState.genreIndex,
+                    onSelectedChange = viewModel.updateGenreIndex,
                 )
+
+                DropdownList(
+                    caption = "検索範囲",
+                    items = viewModel.searchRanges,
+                    selectedIndex = uiState.searchRangeIndex,
+                    onSelectedChange = viewModel.updateSearchRangeIndex,
+                )
+
+                Switch(
+                    checkState = uiState.isSortOptionSelected,
+                    onChanged = { viewModel.updateIsSortOptionChecked(!uiState.isSortOptionSelected) })
+
                 Button(
                     onClick = {
-                        viewModel.searchRestaurants(
-                            request = dummyRequest,
-                            isSortSelected = true
-                        )
+                        viewModel.searchRestaurants()
                     }
                 ) {
                     Text("Search Restaurants")
@@ -160,66 +170,6 @@ fun HomeScreen(
     }
 
 }
-
-//@Composable
-//fun HomeScreen(
-//    viewModel: HomeViewModel = viewModel(),
-//    onSignOutClicked: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val uiState by viewModel.uiState.collectAsState()
-//
-//    Surface(modifier = Modifier.fillMaxSize()) {
-//        Column(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            Text("User Name: ${uiState.userName}")
-//            Button(
-//                onClick = {
-//                    viewModel.signOut()
-//                    onSignOutClicked()
-//                }
-//            ) {
-//                Text("Sign Out")
-//            }
-//
-//            val dummyRequest = HotPepperApiRequest(
-//                lat = 33.652294,
-//                lng = 130.672144,
-//                range = 5,
-//                keyword = "",
-//                order = 4,
-//                count = 100
-//            )
-//            Button(
-//                onClick = {
-//                    viewModel.searchRestaurants(
-//                        request = dummyRequest,
-//                        isSortSelected = true
-//                    )
-//                }
-//            ) {
-//                Text("Search Restaurants")
-//            }
-////            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
-//            RestaurantsList(restaurants = uiState.restaurants)
-//        }
-//        when (val event = uiState.event) {
-//            is HomeUiState.Event.Loading -> {
-//                FullScreenLoading()
-//            }
-//            is HomeUiState.Event.Failure -> {
-//                ErrorDialog("エラー", event.error, viewModel.dismissError)
-//            }
-//            else -> {}
-//        }
-//    }
-//
-//}
-
-
 
 @Composable
 fun RestaurantsList(restaurants: List<Restaurant>) {

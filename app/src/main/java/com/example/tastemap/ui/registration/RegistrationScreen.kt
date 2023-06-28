@@ -135,18 +135,6 @@ fun RegistrationScreen(
     }
 }
 
-@Composable
-fun Switch(
-    checkState: Boolean,
-    onChanged: () -> Unit,
-    modifier: Modifier
-) {
-    Switch(
-        checked = checkState,
-        onCheckedChange = { onChanged() }
-    )
-}
-
 @Preview
 @Composable
 fun RegistrationScreenPreview() {

@@ -23,6 +23,8 @@ import com.example.tastemap.ui.registration.RegistrationScreen
 import com.example.tastemap.ui.signin.SignInScreen
 import com.example.tastemap.ui.signin.SignInViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.tastemap.ui.profile.ProfileScreen
 import com.example.tastemap.ui.profile.ProfileViewModel
 import com.example.tastemap.ui.registration.RegistrationViewModel
@@ -78,13 +80,6 @@ fun TasteMapApp(
             val homeViewModel = hiltViewModel<HomeViewModel>(backStackEntry)
             HomeScreen(
                 homeViewModel,
-                onSignOutClicked = {
-                    navController.navigate(TasteMapScreen.SignIn.name) {
-                        popUpTo(TasteMapScreen.Home.name) {
-                            inclusive = true
-                        }
-                    }
-                },
                 onProfileButtonClicked = {
                     navController.navigate(TasteMapScreen.Profile.name)
                 }
@@ -95,7 +90,15 @@ fun TasteMapApp(
             val profileViewModel = hiltViewModel<ProfileViewModel>(backStackEntry)
             ProfileScreen(
                 profileViewModel,
-                navigateUp = { navController.navigateUp() })
+                navigateUp = { navController.navigateUp() },
+                onSignOutClicked = {
+                    navController.navigate(TasteMapScreen.SignIn.name) {
+                        popUpTo(TasteMapScreen.Profile.name) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }

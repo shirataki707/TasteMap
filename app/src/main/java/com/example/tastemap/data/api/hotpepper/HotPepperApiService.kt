@@ -11,6 +11,7 @@ interface HotPepperApiService {
         @Query("lat") lat: Double,
         @Query("lng") lng: Double,
         @Query("range") range: Int,
+        @Query("genre") genre: String,
         @Query("keyword") keyword: String,
         @Query("order") order: Int,
         @Query("count") count: Int,

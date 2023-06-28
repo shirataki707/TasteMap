@@ -35,7 +35,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun PasswordTextField(
     password: String,
     onPasswordChange: (String) -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
     (TextField(
@@ -52,7 +52,7 @@ fun PasswordTextField(
 fun EmailTextField(
     email: String,
     onEmailChange: (String) -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
     (TextField(
@@ -61,6 +61,18 @@ fun EmailTextField(
         label = { Text("Enter Email") },
         modifier = modifier.widthIn(min = 300.dp)
     ))
+}
+
+@Composable
+fun Switch(
+    checkState: Boolean,
+    onChanged: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    androidx.compose.material3.Switch(
+        checked = checkState,
+        onCheckedChange = { onChanged() }
+    )
 }
 
 @Composable

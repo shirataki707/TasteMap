@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.lang.Math.min
 import javax.inject.Inject
 
 class SearchRestaurantsUseCase @Inject constructor(
@@ -42,15 +43,22 @@ class SearchRestaurantsUseCase @Inject constructor(
                 // shopsの全ての飲食店のPlaceIDを取得
                 val placeIds: List<String> = fetchPlaceIds(scope, shops)
 
-                // 対応したPlaceIDがないお店は除く
+                Timber.d("placeIds: $placeIds")
 
+                // 対応したPlaceIDがないお店は除く
                 val (filteredShops, filteredPlaceIds) = filterEmptyIDs(shops, placeIds)
+
+                Timber.d("filteredShops: $filteredShops, filteredPlaceIds: $filteredPlaceIds")
 
                 // すべてのPlaceIDに対して，お店の詳細情報を取得
                 val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, filteredPlaceIds)
 
+                Timber.d("placeDetails: $placeDetails")
+
                 // HotPepperとPlacesのレスポンスからUIで使うお店情報を作成
-                val restaurants: List<Restaurant> = createRestaurantsFromResponse(shops, placeDetails)
+                val restaurants: List<Restaurant> = createRestaurantsFromResponse(filteredShops, placeDetails)
+
+                Timber.d("restaurants: $restaurants")
 
                 onSuccess(restaurants)
 
@@ -165,7 +173,7 @@ class SearchRestaurantsUseCase @Inject constructor(
     ): List<Restaurant> {
         val restaurants: MutableList<Restaurant> = mutableListOf()
         // とりあえず5件返す
-        for (i in (0..4)) {
+        for (i in (0 until (kotlin.math.min(placeDetails.size, MAX_RESTAURANTS)))) {
             restaurants.add(
                 Restaurant(
                     name = shops[i].name,
@@ -175,6 +183,7 @@ class SearchRestaurantsUseCase @Inject constructor(
                 )
             )
         }
+        Timber.d("createRestaurant: $restaurants")
         // [TODO] スコアでソート
         return restaurants.toList()
     }
@@ -189,5 +198,9 @@ class SearchRestaurantsUseCase @Inject constructor(
     private fun applyPreference(shopList: List<Shop>): List<Shop> {
         // [TODO] shopListから，好みを抜き出し，ランダムにソート, 20件程度にして返す(ID, Detailのリクエスト回数削減)
         return shopList
+    }
+
+    companion object {
+        const val MAX_RESTAURANTS = 5
     }
 }

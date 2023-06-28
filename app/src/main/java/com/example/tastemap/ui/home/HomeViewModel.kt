@@ -42,17 +42,76 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState get() = _uiState.asStateFlow()
 
+    // rangeは5段階．1. 300m, 2. 500m, 3. 1000m(default), 4. 2000m, 5. 3000m
+    val searchRanges = listOf(
+        "300m",
+        "500m",
+        "1km",
+        "2km",
+        "3km"
+    )
+
+    val genres = listOf(
+        "指定なし",
+        "居酒屋",
+        "ダイニングバー・バル",
+        "創作料理",
+        "和食",
+        "洋食",
+        "イタリアン・フレンチ",
+        "中華",
+        "焼肉・ホルモン",
+        "韓国料理",
+        "アジア・エスニック料理",
+        "各国料理",
+        "カラオケ・パーティ",
+        "バー・カクテル",
+        "ラーメン",
+        "お好み焼き・もんじゃ",
+        "カフェ・スイーツ",
+        "その他グルメ"
+    )
+
+    val genresCode = listOf(
+        "",
+        "G001",
+        "G002",
+        "G003",
+        "G004",
+        "G005",
+        "G006",
+        "G007",
+        "G008",
+        "G017",
+        "G009",
+        "G010",
+        "G011",
+        "G012",
+        "G013",
+        "G016",
+        "G014",
+        "G015"
+    )
+
     init {
         viewModelScope.launch {
             fetchUserDetails()
         }
     }
 
-    fun searchRestaurants(
-        request: HotPepperApiRequest,
-        isSortSelected: Boolean,
-    ) {
+    fun searchRestaurants() {
         _uiState.value = uiState.value.copy(event = HomeUiState.Event.Loading)
+
+        val request = HotPepperApiRequest(
+            lat = 33.652294,
+            lng = 130.672144,
+            range = uiState.value.searchRangeIndex + 1, // apiのrangeは1から始まるが，uiStateは0から始まるため
+            keyword = uiState.value.keyword,
+            genre = genresCode[uiState.value.genreIndex]
+        )
+
+        Timber.d("hotPepperApiRequest: $request")
+
         val onSuccess: (List<Restaurant>) -> Unit = { restaurants ->
             if (restaurants.isEmpty()) {
                 val emptyMessage = "検索結果は0件でした。条件を変えて検索してください。"
@@ -66,8 +125,15 @@ class HomeViewModel @Inject constructor(
         val onFailure: (String) -> Unit =  { error ->
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
         }
+
         viewModelScope.launch {
-            searchRestaurantsUseCase(this, request, isSortSelected, onSuccess, onFailure)
+            searchRestaurantsUseCase(
+                this,
+                request,
+                uiState.value.isSortOptionSelected,
+                onSuccess,
+                onFailure
+            )
         }
     }
     fun signOut() {
@@ -93,6 +159,22 @@ class HomeViewModel @Inject constructor(
 
     val dismissError: () -> Unit = {
         _uiState.value = uiState.value.copy(event = HomeUiState.Event.Idle)
+    }
+
+    val updateSearchRangeIndex: (Int) -> Unit = { newIndex ->
+        _uiState.value = uiState.value.copy(searchRangeIndex = newIndex)
+    }
+
+    val updateGenreIndex: (Int) -> Unit = { newIndex ->
+        _uiState.value = uiState.value.copy(genreIndex = newIndex)
+    }
+
+    fun updateKeyword(newKeyword: String) {
+        _uiState.value = uiState.value.copy(keyword = newKeyword)
+    }
+
+    fun updateIsSortOptionChecked(newBoolean: Boolean) {
+        _uiState.value = uiState.value.copy(isSortOptionSelected = newBoolean)
     }
 
 }
