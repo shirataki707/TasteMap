@@ -27,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,21 +36,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.tastemap.R
 
 @Composable
 fun PasswordTextField(
     password: String,
     onPasswordChange: (String) -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
     TextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Enter password") },
-        modifier = modifier.widthIn(min = 300.dp),
+        label = { Text(stringResource(id = R.string.enter_password)) },
+        modifier = modifier.widthIn(min = dimensionResource(id = R.dimen.width_medium)),
         visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        enabled = enabled
     )
 }
 
@@ -56,14 +61,16 @@ fun PasswordTextField(
 fun EmailTextField(
     email: String,
     onEmailChange: (String) -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
     TextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Enter Email") },
-        modifier = modifier.widthIn(min = 300.dp)
+        label = { Text(stringResource(id = R.string.enter_email)) },
+        modifier = modifier.widthIn(min = dimensionResource(id = R.dimen.width_medium)),
+        enabled = enabled
     )
 }
 

@@ -6,10 +6,11 @@ data class SignInUiState(
     val isSignInButtonEnabled: Boolean = false,
     val event: Event = Event.Idle
 ) {
+
     sealed class Event {
         object Idle : Event()
         object Loading : Event()
-        object Success : Event()
-        data class Failure(val error: String) : Event()
+        object SignInSuccess : Event()
+        data class SignInFailure(val error: String) : Event()
     }
 }

@@ -1,8 +1,21 @@
 <resources>
     <string name="app_name">TasteMap</string>
-    <string name="signin">SignIn</string>
+    <string name="signin">ログイン</string>
     <string name="registration">Registration</string>
     <string name="home">Home</string>
+    <string name="to_registration">アカウントを持っていない場合、新規登録はこちら</string>
+    <string name="auth_error">認証エラー</string>
+    <string name="enter_password">パスワードを入力してください</string>
+    <string name="enter_email">メールアドレスを入力してください</string>
+    <string name="success">成功</string>
+    <string name="ok">OK</string>
+    <string name="signin_success">ログインに成功しました</string>
+
+    <!-- Firebase Auth Error -->
+    <string name="email_already_exists">auth/email-already-exists</string>
+    <string name="internal_error">auth/internal-error</string>
+    <string name="invalid_email">auth/invalid-email</string>
+    <string name="invalid_password">auth/invalid-password</string>
 
     <!-- rangeは5段階．1. 300m, 2. 500m, 3. 1000m(default), 4. 2000m, 5. 3000m -->
     <string-array name="searchRanges">
