@@ -33,10 +33,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SignInScreen(
+    modifier: Modifier = Modifier,
     viewModel: SignInViewModel = viewModel(),
     onRegisterButtonClicked: () -> Unit,
-    onSignInButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    onSignInButtonClicked: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -45,13 +45,13 @@ fun SignInScreen(
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
 
             // [NOTE] 基本的にuiEventがIdle時以外は入力を受け付けない
+
             // メールアドレスの入力欄
             EmailTextField(
                 email = uiState.email,
@@ -84,8 +84,7 @@ fun SignInScreen(
 
         // 新規登録画面への遷移ボタン
         Box(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomCenter
         ) {
             TextButton(

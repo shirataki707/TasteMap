@@ -45,7 +45,7 @@ fun TasteMapApp(
         composable(route = TasteMapScreen.SignIn.name) { backStackEntry ->
             val signInViewModel = hiltViewModel<SignInViewModel>(backStackEntry)
             SignInScreen(
-                signInViewModel,
+                viewModel = signInViewModel,
                 onRegisterButtonClicked = { navController.navigate(TasteMapScreen.Registration.name) },
                 onSignInButtonClicked = {
                     navController.navigate(TasteMapScreen.Home.name) {
@@ -58,7 +58,7 @@ fun TasteMapApp(
         composable(route = TasteMapScreen.Registration.name) { backStackEntry ->
             val registrationViewModel = hiltViewModel<RegistrationViewModel>(backStackEntry)
             RegistrationScreen(
-                registrationViewModel,
+                viewModel = registrationViewModel,
                 onPopBackButtonClicked = { navController.navigateUp() },
                 onRegisterButtonClicked = {
                     navController.navigate(TasteMapScreen.Home.name) {
@@ -72,7 +72,7 @@ fun TasteMapApp(
         composable(route = TasteMapScreen.Home.name) { backStackEntry ->
             val homeViewModel = hiltViewModel<HomeViewModel>(backStackEntry)
             HomeScreen(
-                homeViewModel,
+                viewModel = homeViewModel,
                 onProfileButtonClicked = {
                     navController.navigate(TasteMapScreen.Profile.name)
                 }
@@ -82,7 +82,7 @@ fun TasteMapApp(
         composable(route = TasteMapScreen.Profile.name) { backStackEntry ->
             val profileViewModel = hiltViewModel<ProfileViewModel>(backStackEntry)
             ProfileScreen(
-                profileViewModel,
+                viewModel = profileViewModel,
                 navigateUp = { navController.navigateUp() },
                 onSignOutClicked = {
                     navController.navigate(TasteMapScreen.SignIn.name) {

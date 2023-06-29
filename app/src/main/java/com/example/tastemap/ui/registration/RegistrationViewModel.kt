@@ -3,12 +3,8 @@ package com.example.tastemap.ui.registration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tastemap.data.model.UserPreferences
-import com.example.tastemap.data.repository.AuthRepository
-import com.example.tastemap.data.repository.FirestoreRepository
 import com.example.tastemap.domain.RegisterAccountUseCase
-import com.example.tastemap.ui.signin.SignInUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -22,31 +18,25 @@ class RegistrationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState get() = _uiState.asStateFlow()
 
-    val reviewPriorities = listOf(
-        "好みはない",
-        "星の数を重視",
-        "レビュー数を重視"
-    )
-
-    val smokingPriorities = listOf(
-        "好みはない",
-        "禁煙席のみ",
-        "喫煙席のみ"
-    )
-
-    fun registerAccount(onRegisterSuccess: () -> Unit) {
+    fun registerAccount() {
         _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.Loading)
+
+        // 好み情報
         val userPreferences = UserPreferences(
             reviewPriorities = uiState.value.reviewsPrioritiesIndex,
             smokingPriorities = uiState.value.smokingPrioritiesIndex
         )
+
+        // Registerが正常に完了した時は完了メッセージを出して画面遷移
         val onRegisterSuccess = {
-            _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.Success)
-            onRegisterSuccess()
+            _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.RegisterSuccess)
         }
+
+        // Registerが失敗した時はエラーダイアログを表示
         val onRegisterFailure: (String) -> Unit = { error ->
-            _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.Failure(error))
+            _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.RegisterFailure(error))
         }
+
         viewModelScope.launch {
             registerAccountUseCase(
                 uiState.value.userName,
@@ -74,6 +64,7 @@ class RegistrationViewModel @Inject constructor(
         checkButtonState()
     }
 
+    // メールアドレス，パスワード，ユーザ名がすべて空ではない場合だけ，登録ボタンを有効にする
     private fun checkButtonState() {
         _uiState.value = uiState.value.copy(
             isSignUpButtonEnabled = uiState.value.email.isNotBlank()
@@ -90,7 +81,7 @@ class RegistrationViewModel @Inject constructor(
         _uiState.value = uiState.value.copy(reviewsPrioritiesIndex = newIndex)
     }
 
-    val dismissError: () -> Unit = {
+    val dismissDialog: () -> Unit = {
         _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.Idle)
     }
 }

@@ -1,15 +1,19 @@
 <resources>
     <string name="app_name">TasteMap</string>
     <string name="signin">ログイン</string>
-    <string name="registration">Registration</string>
-    <string name="home">Home</string>
+    <string name="registration">新規登録</string>
+    <string name="home">ホーム</string>
     <string name="to_registration">アカウントを持っていない場合、新規登録はこちら</string>
+    <string name="back_signin">ログインはこちら</string>
     <string name="auth_error">認証エラー</string>
     <string name="enter_password">パスワードを入力してください</string>
     <string name="enter_email">メールアドレスを入力してください</string>
     <string name="success">成功</string>
     <string name="ok">OK</string>
     <string name="signin_success">ログインに成功しました</string>
+    <string name="enter_username">ユーザ名を入力してください</string>
+    <string name="review_priority">飲食店の評価方法</string>
+    <string name="smoking_priority">喫煙・禁煙席の好み</string>
 
     <!-- Firebase Auth Error -->
     <string name="email_already_exists">auth/email-already-exists</string>
@@ -66,5 +70,17 @@
         <item>G016</item>
         <item>G014</item>
         <item>G015</item>
+    </string-array>
+
+    <string-array name="reviewPriorities">
+        <item>好みはない</item>
+        <item>星の数を重視</item>
+        <item>レビュー数を重視</item>
+    </string-array>
+
+    <string-array name="smokingPriorities">
+        <item>好みはない</item>
+        <item>禁煙席のみ</item>
+        <item>喫煙席のみ</item>
     </string-array>
 </resources>

@@ -20,11 +20,12 @@ class SignInViewModel @Inject constructor(
     fun signIn() {
         _uiState.value = uiState.value.copy(event = SignInUiState.Event.Loading)
 
-        // SignInが正常に完了した場合，onSignInButtonClickedを呼び出し，画面遷移をする
+        // SignInが正常に完了した時は完了メッセージを出して画面遷移
         val onSignInSuccess = {
             _uiState.value = uiState.value.copy(event = SignInUiState.Event.SignInSuccess)
         }
 
+        // SignInが失敗した時はエラーダイアログを表示
         val onSignInFailure: (String) -> Unit = { error ->
             _uiState.value = uiState.value.copy(event = SignInUiState.Event.SignInFailure(error))
         }

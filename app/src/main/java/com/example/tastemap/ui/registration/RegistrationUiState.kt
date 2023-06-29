@@ -12,7 +12,7 @@ data class RegistrationUiState(
     sealed class Event {
         object Idle : Event()
         object Loading : Event()
-        object Success : Event()
-        data class Failure(val error: String) : Event()
+        object RegisterSuccess : Event()
+        data class RegisterFailure(val error: String) : Event()
     }
 }
