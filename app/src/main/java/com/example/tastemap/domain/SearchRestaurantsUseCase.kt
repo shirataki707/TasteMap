@@ -39,36 +39,34 @@ class SearchRestaurantsUseCase @Inject constructor(
             Timber.d("shops: $shops")
 
             // Googleの星とレビュー数でソートする場合
+            // shopsの全ての飲食店のPlaceIDを取得
+            val placeIds: List<String> = fetchPlaceIds(scope, shops)
+
+            Timber.d("placeIds: $placeIds")
+
+            // 対応したPlaceIDがないお店は除く
+            val (filteredShops, filteredPlaceIds) = filterEmptyIDs(shops, placeIds)
+
+            Timber.d("filteredShops: $filteredShops, filteredPlaceIds: $filteredPlaceIds")
+
+            // すべてのPlaceIDに対して，お店の詳細情報を取得
+            val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, filteredPlaceIds)
+
+            Timber.d("placeDetails: $placeDetails")
+
+            // HotPepperとPlacesのレスポンスからUIで使うお店情報を作成
+            val restaurants: List<Restaurant> = createRestaurantsFromResponse(filteredShops, placeDetails)
+
+            Timber.d("restaurants: $restaurants")
+
+            // [TODO] ソート
             if (isSortSelected) {
-                // shopsの全ての飲食店のPlaceIDを取得
-                val placeIds: List<String> = fetchPlaceIds(scope, shops)
 
-                Timber.d("placeIds: $placeIds")
-
-                // 対応したPlaceIDがないお店は除く
-                val (filteredShops, filteredPlaceIds) = filterEmptyIDs(shops, placeIds)
-
-                Timber.d("filteredShops: $filteredShops, filteredPlaceIds: $filteredPlaceIds")
-
-                // すべてのPlaceIDに対して，お店の詳細情報を取得
-                val placeDetails: List<PlaceDetailResult> = fetchPlaceDetails(scope, filteredPlaceIds)
-
-                Timber.d("placeDetails: $placeDetails")
-
-                // HotPepperとPlacesのレスポンスからUIで使うお店情報を作成
-                val restaurants: List<Restaurant> = createRestaurantsFromResponse(filteredShops, placeDetails)
-
-                Timber.d("restaurants: $restaurants")
-
-                onSuccess(restaurants)
-
-                Timber.d("shops: $filteredShops, scores: $placeDetails")
-            } else {
-                // [TODO] 5件程度にして返す
-                val restaurants: List<Restaurant> = listOf()
-
-                onSuccess(restaurants)
             }
+
+            onSuccess(restaurants)
+
+            Timber.d("shops: $filteredShops, scores: $placeDetails")
 
         } catch (e: Exception) {
             onFailure("飲食店情報の取得に失敗しました: ${e.message}")
@@ -172,6 +170,7 @@ class SearchRestaurantsUseCase @Inject constructor(
         placeDetails: List<PlaceDetailResult>
     ): List<Restaurant> {
         val restaurants: MutableList<Restaurant> = mutableListOf()
+        // [TODO] いったんRestaurantを全て作った後，オプションに応じてソート．その後，5件を返す．
         // とりあえず5件返す
         for (i in (0 until (kotlin.math.min(placeDetails.size, MAX_RESTAURANTS)))) {
             restaurants.add(
@@ -179,12 +178,15 @@ class SearchRestaurantsUseCase @Inject constructor(
                     name = shops[i].name,
                     rating = placeDetails[i].rating,
                     userReviews = placeDetails[i].userRatingTotal,
-                    location = Location(latitude = shops[i].lat, longitude = shops[i].lng)
+                    location = Location(latitude = shops[i].lat, longitude = shops[i].lng),
+                    isOpenNow = placeDetails[i].currentOpeningHours.openNow,
+                    weekdayText = placeDetails[i].currentOpeningHours.weekdayText,
+                    priceLevel = placeDetails[i].priceLevel,
+                    website = placeDetails[i].website
                 )
             )
         }
         Timber.d("createRestaurant: $restaurants")
-        // [TODO] スコアでソート
         return restaurants.toList()
     }
 

@@ -71,11 +71,13 @@ import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.ErrorDialog
 import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.HyperlinkText
 import com.example.tastemap.ui.components.Switch
 import com.example.tastemap.ui.theme.TasteMapTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
 import java.util.Locale
 
 
@@ -194,7 +196,7 @@ fun Restaurant(restaurantDetail: Restaurant) {
                 // 位置情報をアプリが取得できるようにパーミションを与え，現在地を設定
                 val start = Location(33.6537617, 130.6729035)
                 val destination = restaurantDetail.location
-                openGoogleMap(context, start, destination)
+                openGoogleMap(context, start, restaurantDetail.name)
             }
         }
     ) {
@@ -202,7 +204,7 @@ fun Restaurant(restaurantDetail: Restaurant) {
     }
 }
 
-private fun openGoogleMap(context: Context, start: Location, destination: Location) {
+private fun openGoogleMap(context: Context, start: Location, destination: String) {
     val intent = Intent()
     intent.action = Intent.ACTION_VIEW
     intent.setClassName(
@@ -216,8 +218,10 @@ private fun openGoogleMap(context: Context, start: Location, destination: Locati
     // 出発地(緯度，経度), 目的地(緯度，経度), 交通手段
     val uri = String.format(
         Locale.US,
-        "http://maps.google.com/maps?saddr=%s,%s&daddr=%s,%s&dirflg=%s",
-        start.latitude, start.longitude, destination.latitude, destination.longitude, transitOptions[1]
+        "http://maps.google.com/maps?saddr=%s,%s&daddr=%s&dirflg=%s",
+        start.latitude, start.longitude, URLEncoder.encode(destination, "UTF-8"), transitOptions[1]
+//        "http://maps.google.com/maps?saddr=%s,%s&daddr=%s,%s&dirflg=%s",
+//        start.latitude, start.longitude, destination.latitude, destination.longitude, transitOptions[1]
     )
     intent.data = Uri.parse(uri)
     context.startActivity(intent)
@@ -244,6 +248,16 @@ fun RestaurantContent(restaurantDetail: Restaurant) {
                 "star: ${restaurantDetail.rating}, reviews: ${restaurantDetail.userReviews}",
                 style = MaterialTheme.typography.bodyMedium
             )
+            Text(
+                "price level: ${restaurantDetail.priceLevel}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                "Opening: ${restaurantDetail.isOpenNow}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            HyperlinkText(url = restaurantDetail.website)
+
         }
     }
 }
