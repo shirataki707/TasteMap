@@ -3,4 +3,55 @@
     <string name="signin">SignIn</string>
     <string name="registration">Registration</string>
     <string name="home">Home</string>
+
+    <!-- rangeは5段階．1. 300m, 2. 500m, 3. 1000m(default), 4. 2000m, 5. 3000m -->
+    <string-array name="searchRanges">
+        <item>300m</item>
+        <item>500m</item>
+        <item>1km</item>
+        <item>2km</item>
+        <item>3km</item>
+    </string-array>
+
+    <string-array name="genres">
+        <item>指定なし</item>
+        <item>居酒屋</item>
+        <item>ダイニングバー・バル</item>
+        <item>創作料理</item>
+        <item>和食</item>
+        <item>洋食</item>
+        <item>イタリアン・フレンチ</item>
+        <item>中華</item>
+        <item>焼肉・ホルモン</item>
+        <item>韓国料理</item>
+        <item>アジア・エスニック料理</item>
+        <item>各国料理</item>
+        <item>カラオケ・パーティ</item>
+        <item>バー・カクテル</item>
+        <item>ラーメン</item>
+        <item>お好み焼き・もんじゃ</item>
+        <item>カフェ・スイーツ</item>
+        <item>その他グルメ</item>
+    </string-array>
+
+    <string-array name="genresCode">
+        <item></item>
+        <item>G001</item>
+        <item>G002</item>
+        <item>G003</item>
+        <item>G004</item>
+        <item>G005</item>
+        <item>G006</item>
+        <item>G007</item>
+        <item>G008</item>
+        <item>G017</item>
+        <item>G009</item>
+        <item>G010</item>
+        <item>G011</item>
+        <item>G012</item>
+        <item>G013</item>
+        <item>G016</item>
+        <item>G014</item>
+        <item>G015</item>
+    </string-array>
 </resources>

@@ -6,8 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -36,9 +34,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable
 fun PasswordTextField(
@@ -47,14 +42,14 @@ fun PasswordTextField(
     modifier: Modifier = Modifier
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
-    (TextField(
+    TextField(
         value = password,
         onValueChange = onPasswordChange,
         label = { Text("Enter password") },
         modifier = modifier.widthIn(min = 300.dp),
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-    ))
+    )
 }
 
 @Composable
@@ -64,23 +59,11 @@ fun EmailTextField(
     modifier: Modifier = Modifier
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
-    (TextField(
+    TextField(
         value = email,
         onValueChange = onEmailChange,
         label = { Text("Enter Email") },
         modifier = modifier.widthIn(min = 300.dp)
-    ))
-}
-
-@Composable
-fun Switch(
-    checkState: Boolean,
-    onChanged: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    androidx.compose.material3.Switch(
-        checked = checkState,
-        onCheckedChange = { onChanged() }
     )
 }
 

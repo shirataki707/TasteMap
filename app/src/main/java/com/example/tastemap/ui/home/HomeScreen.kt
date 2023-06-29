@@ -1,70 +1,48 @@
 package com.example.tastemap.ui.home
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tastemap.R
-import com.example.tastemap.TasteMapApp
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
 import com.example.tastemap.data.model.Location
 import com.example.tastemap.data.model.Restaurant
@@ -72,10 +50,7 @@ import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.ErrorDialog
 import com.example.tastemap.ui.components.FullScreenLoading
 import com.example.tastemap.ui.components.HyperlinkText
-import com.example.tastemap.ui.components.Switch
 import com.example.tastemap.ui.theme.TasteMapTheme
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.util.Locale
@@ -109,6 +84,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val genres = stringArrayResource(id = R.array.genres).toList()
+    val genresCode = stringArrayResource(id = R.array.genresCode).toList()
+    val searchRange = stringArrayResource(id = R.array.searchRanges).toList()
 
     Scaffold(
         topBar = {
@@ -133,30 +111,38 @@ fun HomeScreen(
 
                 DropdownList(
                     caption = "検索ジャンル",
-                    items = viewModel.genres,
+                    items = genres,
                     selectedIndex = uiState.genreIndex,
                     onSelectedChange = viewModel.updateGenreIndex,
                 )
 
                 DropdownList(
                     caption = "検索範囲",
-                    items = viewModel.searchRanges,
+                    items = searchRange,
                     selectedIndex = uiState.searchRangeIndex,
                     onSelectedChange = viewModel.updateSearchRangeIndex,
                 )
 
                 Switch(
-                    checkState = uiState.isSortOptionSelected,
-                    onChanged = { viewModel.updateIsSortOptionChecked(!uiState.isSortOptionSelected) })
+                    checked = uiState.isSortOptionSelected,
+                    onCheckedChange = { viewModel.updateIsSortOptionChecked(!uiState.isSortOptionSelected) })
 
                 Button(
                     onClick = {
-                        viewModel.searchRestaurants()
+                        val request = HotPepperApiRequest(
+                            lat = 33.652294,
+                            lng = 130.672144,
+                            range = uiState.searchRangeIndex + 1, // apiのrangeは1から始まるが，uiStateは0から始まるため
+                            keyword = uiState.keyword,
+                            genre = genresCode[uiState.genreIndex]
+                        )
+
+                        viewModel.searchRestaurants(request)
                     }
                 ) {
                     Text("Search Restaurants")
                 }
-//            val tmpRestaurants = listOf(Restaurant(name = "test", rating = 3.2, usrReviews = 4))
+
                 RestaurantsList(restaurants = uiState.restaurants)
             }
             when (val event = uiState.event) {
