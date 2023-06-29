@@ -3,19 +3,18 @@ package com.example.tastemap.ui.registration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,124 +22,142 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.tastemap.ui.components.EmailTextField
-import com.example.tastemap.ui.components.PasswordTextField
-import com.example.tastemap.ui.theme.TasteMapTheme
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tastemap.R
 import com.example.tastemap.ui.components.DropdownList
+import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
 import com.example.tastemap.ui.components.FullScreenLoading
-import com.example.tastemap.ui.signin.SignInUiState
+import com.example.tastemap.ui.components.PasswordTextField
+import com.example.tastemap.ui.components.SuccessIcon
+import kotlinx.coroutines.delay
+
+// [TODO] 架空のメールアドレスで登録できるので，メール認証をする
 
 @Composable
 fun RegistrationScreen(
+    modifier: Modifier = Modifier,
     viewModel: RegistrationViewModel = viewModel(),
     onPopBackButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    onRegisterButtonClicked: () -> Unit
 ) {
-//    var userName by remember { mutableStateOf("") }
-//    var email by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
-//    var isSmoker by remember { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
 
+    var showSuccessMessage by remember { mutableStateOf(false) }
+
+    val reviewPriorities = stringArrayResource(id = R.array.reviewPriorities).toList()
+    val smokingPriorities = stringArrayResource(id = R.array.smokingPriorities).toList()
+
     Surface(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            // [NOTE] 基本的にuiEventがIdle時以外は入力を受け付けない
+
+            // ユーザ名の入力欄
+            // [NOTE] modifierのpaddingとかの設定の順番でレイアウトが変わるため注意
+            @OptIn(ExperimentalMaterial3Api::class)
+            TextField(
+                value = uiState.userName,
+                onValueChange = { userName -> viewModel.updateUserName(userName) },
+                label = { Text(stringResource(id = R.string.enter_username)) },
+                enabled = uiState.event is RegistrationUiState.Event.Idle,
+                modifier = modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .widthIn(min = dimensionResource(id = R.dimen.width_medium))
+            )
+
+            // メールアドレスの入力欄
+            EmailTextField(
+                email = uiState.email,
+                onEmailChange = { email -> viewModel.updateEmail(email) },
+                enabled = uiState.event is RegistrationUiState.Event.Idle,
+                modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            )
+
+            // パスワードの入力欄
+            PasswordTextField(
+                password = uiState.password,
+                onPasswordChange = { password -> viewModel.updatePassword(password) },
+                enabled = uiState.event is RegistrationUiState.Event.Idle,
+                modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            )
+
+            // 飲食店評価の好みを選ぶドロップダウンリスト
+            DropdownList(
+                items = reviewPriorities,
+                selectedIndex = uiState.reviewsPrioritiesIndex,
+                onSelectedChange = viewModel.updateReviewPrioritiesIndex,
+                caption = stringResource(id = R.string.review_priority),
+                modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            )
+
+            // 喫煙・禁煙席の好みを選ぶドロップダウンリスト
+            DropdownList(
+                items = smokingPriorities,
+                selectedIndex = uiState.smokingPrioritiesIndex,
+                onSelectedChange = viewModel.updateSmokingPrioritiesIndex,
+                caption = stringResource(id = R.string.smoking_priority),
+                modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            )
+
+            // 登録ボタン
+            Button(
+                onClick = { viewModel.registerAccount() },
+                modifier = modifier
+                    .widthIn(min = dimensionResource(id = R.dimen.width_medium))
+                    .padding(dimensionResource(id = R.dimen.padding_medium)),
+                enabled = uiState.isSignUpButtonEnabled
+                        && uiState.event is RegistrationUiState.Event.Idle
             ) {
-
-                @OptIn(ExperimentalMaterial3Api::class)
-                (TextField(
-                    value = uiState.userName,
-                    onValueChange = { userName -> viewModel.updateUserName(userName) },
-                    label = { Text("Enter User Name") },
-                    modifier = modifier.widthIn(min = 300.dp)
-                ))
-
-                EmailTextField(
-                    email = uiState.email,
-                    onEmailChange = { email -> viewModel.updateEmail(email) },
-                    modifier = modifier
-                )
-
-                PasswordTextField(
-                    password = uiState.password,
-                    onPasswordChange = { password -> viewModel.updatePassword(password) },
-                    modifier = modifier
-                )
-//                Row(
-//                    modifier = modifier.width(300.dp),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Text("喫煙席のみ検索")
-//                    Spacer(modifier = Modifier.width(16.dp))
-//                    Switch(
-//                        checkState = uiState.isSmoker,
-//                        onChanged = { viewModel.updateIsSmoker(!uiState.isSmoker) },
-//                        modifier = modifier
-//                    )
-//                }
-                DropdownList(
-                    items = viewModel.reviewPriorities,
-                    selectedIndex = uiState.reviewsPrioritiesIndex,
-                    onSelectedChange = viewModel.updateReviewPrioritiesIndex,
-                    caption = "飲食店の評価方法"
-                )
-
-                DropdownList(
-                    items = viewModel.smokingPriorities,
-                    selectedIndex = uiState.smokingPrioritiesIndex,
-                    onSelectedChange = viewModel.updateSmokingPrioritiesIndex,
-                    caption = "喫煙・禁煙席の好み"
-                )
-
-                Button(
-                    onClick = { viewModel.registerAccount(
-                        onRegisterSuccess = onRegisterButtonClicked
-                    )},
-                    modifier = modifier.widthIn(min = 300.dp),
-                    enabled = uiState.isSignUpButtonEnabled
-                ) {
-                    Text("Register")
-                }
-
-                Button(
-                    onClick = onPopBackButtonClicked,
-                    modifier = modifier.widthIn(min = 300.dp)
-                ) {
-                    Text("To SignIn")
-                }
-
-            }
-            when (val event = uiState.event) {
-                is RegistrationUiState.Event.Loading -> {
-                    FullScreenLoading()
-                }
-
-                is RegistrationUiState.Event.Failure -> {
-                    ErrorDialog("認証エラー", event.error, viewModel.dismissError)
-                }
-
-                else -> {}
+                Text(stringResource(id = R.string.registration))
             }
         }
-    }
-}
 
-@Preview
-@Composable
-fun RegistrationScreenPreview() {
-    TasteMapTheme {
-        RegistrationScreen(
-            onPopBackButtonClicked = { /*TODO*/ },
-            onRegisterButtonClicked = { /*TODO*/ })
+        // ログイン画面への遷移ボタン
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            TextButton(
+                onClick = onPopBackButtonClicked,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
+                enabled = uiState.event is RegistrationUiState.Event.Idle
+            ) {
+                Text(stringResource(id = R.string.back_signin))
+            }
+        }
+
+        // uiイベントに応じた画面を描画
+        when (val event = uiState.event) {
+            is RegistrationUiState.Event.Loading -> { FullScreenLoading() }
+            is RegistrationUiState.Event.RegisterFailure -> {
+                ErrorDialog(
+                    stringResource(id = R.string.auth_error),
+                    event.error,
+                    viewModel.dismissDialog
+                )
+            }
+            // 1秒間だけログイン成功のアイコンを表示
+            is RegistrationUiState.Event.RegisterSuccess -> {
+                LaunchedEffect(Unit) {
+                    showSuccessMessage = true
+                    delay(1000) // 1秒間表示する
+                    showSuccessMessage = false
+                    onRegisterButtonClicked()
+                }
+            }
+            else -> {}
+        }
+        if (showSuccessMessage) {
+            SuccessIcon()
+        }
     }
 }

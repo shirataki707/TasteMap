@@ -14,10 +14,8 @@ import com.example.tastemap.data.model.Shop
 import com.example.tastemap.data.repository.HotPepperApiRepository
 import com.example.tastemap.data.repository.PlacesApiRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.lang.Math.min
 import javax.inject.Inject
 
 class SearchRestaurantsUseCase @Inject constructor(
@@ -59,7 +57,7 @@ class SearchRestaurantsUseCase @Inject constructor(
 
             Timber.d("restaurants: $restaurants")
 
-            // [TODO] ソート
+            // [TODO] 星とレビュー数などからソートしよう
             if (isSortSelected) {
 
             }

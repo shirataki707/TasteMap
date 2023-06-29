@@ -1,23 +1,23 @@
 package com.example.tastemap.data.repository
 
-import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
-import com.example.tastemap.data.api.hotpepper.HotPepperApiResponse
 import com.example.tastemap.data.api.places.PlacesApiClient
 import com.example.tastemap.data.api.places.PlacesApiDetailRequest
 import com.example.tastemap.data.api.places.PlacesApiDetailResponse
 import com.example.tastemap.data.api.places.PlacesApiIdRequest
 import com.example.tastemap.data.api.places.PlacesApiIdResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PlacesApiRepository @Inject constructor(
-    private val apiClient: PlacesApiClient
+    private val apiClient: PlacesApiClient,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
     suspend fun fetchPlaceId(request: PlacesApiIdRequest): Result<PlacesApiIdResponse> {
 
-        return withContext(Dispatchers.IO) {
+        return withContext(defaultDispatcher) {
             try {
                 val response = apiClient.fetchPlaceId(request)
 
@@ -35,7 +35,7 @@ class PlacesApiRepository @Inject constructor(
 
     suspend fun fetchPlaceDetail(request: PlacesApiDetailRequest): Result<PlacesApiDetailResponse> {
 
-        return withContext(Dispatchers.IO) {
+        return withContext(defaultDispatcher) {
             try {
                 val response = apiClient.fetchDetail(request)
 

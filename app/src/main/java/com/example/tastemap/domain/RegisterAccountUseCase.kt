@@ -3,10 +3,6 @@ package com.example.tastemap.domain
 import com.example.tastemap.data.model.UserPreferences
 import com.example.tastemap.data.repository.AuthRepository
 import com.example.tastemap.data.repository.FirestoreRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class RegisterAccountUseCase @Inject constructor(
@@ -29,12 +25,13 @@ class RegisterAccountUseCase @Inject constructor(
             onSuccess = {
                     registerUserDetail(userName, userPreferences, onRegisterSuccess, onRegisterFailure)},
             onFailure = { e ->
-                onRegisterFailure("アカウントの登録に失敗しました。: ${e.message}")
+                // [NOTE] メッセージが英語なので，エラーコードに応じて日本語を返す方がベター
+                onRegisterFailure(e.localizedMessage)
             }
         )
     }
 
-    // [TODO] ほんとはsuspendにしてcoroutineScopeで実行したいけど，なぜかうまくいかない
+    // [WARNING] ほんとはsuspendにしてcoroutineScopeで実行したいけど，なぜかうまくいかない
     // 好み情報の登録後，登録がすべて完了とし，画面遷移等のCallBackを実行
     private fun registerUserDetail(
         userName: String,
@@ -47,8 +44,9 @@ class RegisterAccountUseCase @Inject constructor(
             userPreferences = userPreferences,
             onSuccess = { onRegisterSuccess() },
             onFailure = { e ->
-                onRegisterFailure("好み情報のデータベースへの登録に失敗しました。: ${e.message}") }
+                // [NOTE] メッセージが英語なので，エラーコードに応じて日本語を返す方がベター
+                onRegisterFailure(e.localizedMessage)
+            }
         )
     }
-
 }

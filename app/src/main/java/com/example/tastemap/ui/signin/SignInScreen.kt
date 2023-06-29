@@ -5,110 +5,121 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.example.tastemap.MainActivityViewModel
+import com.example.tastemap.R
 import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
 import com.example.tastemap.ui.components.FullScreenLoading
 import com.example.tastemap.ui.components.PasswordTextField
-import com.example.tastemap.ui.home.HomeUiState
-import com.example.tastemap.ui.theme.TasteMapTheme
+import com.example.tastemap.ui.components.SuccessIcon
+import kotlinx.coroutines.delay
 
 @Composable
 fun SignInScreen(
+    modifier: Modifier = Modifier,
     viewModel: SignInViewModel = viewModel(),
     onRegisterButtonClicked: () -> Unit,
-    onSignInButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    onSignInButtonClicked: () -> Unit
 ) {
-//    var email by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
 
     val uiState by viewModel.uiState.collectAsState()
 
+    var showSuccessMessage by remember { mutableStateOf(false) }
+
     Surface(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            // [NOTE] 基本的にuiEventがIdle時以外は入力を受け付けない
+
+            // メールアドレスの入力欄
+            EmailTextField(
+                email = uiState.email,
+                onEmailChange = { email -> viewModel.updateEmail(email) },
+                enabled = uiState.event is SignInUiState.Event.Idle,
+                modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            )
+
+            // パスワードの入力欄
+            PasswordTextField(
+                password = uiState.password,
+                onPasswordChange = { password -> viewModel.updatePassword(password) },
+                enabled = uiState.event is SignInUiState.Event.Idle,
+                modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+            )
+
+            // ログインボタン
+            Button(
+                onClick = { viewModel.signIn() },
+                modifier = modifier
+                    .widthIn(min = dimensionResource(id = R.dimen.width_medium))
+                    .padding(dimensionResource(id = R.dimen.padding_medium)),
+                enabled = uiState.isSignInButtonEnabled
+                        && uiState.event is SignInUiState.Event.Idle
             ) {
-
-                EmailTextField(
-                    email = uiState.email,
-                    onEmailChange = { email -> viewModel.updateEmail(email) },
-                    modifier = modifier
-                )
-
-                PasswordTextField(
-                    password = uiState.password,
-                    onPasswordChange = { password -> viewModel.updatePassword(password) },
-                    modifier = modifier
-                )
-
-                Button(
-                    onClick = {
-                        viewModel.signIn(onSignInButtonClicked)
-                    },
-                    modifier = modifier.widthIn(min = 300.dp),
-                    enabled = uiState.isSignInButtonEnabled,
-                ) {
-                    Text("SignIn")
-                }
-
-                Button(
-                    onClick = onRegisterButtonClicked,
-                    modifier = modifier.widthIn(min = 300.dp)
-                ) {
-                    Text("Register")
-                }
-
+                Text(stringResource(id = R.string.signin))
             }
-            when (val event = uiState.event) {
-                is SignInUiState.Event.Loading -> {
-                    FullScreenLoading()
-                }
 
-                is SignInUiState.Event.Failure -> {
-                    ErrorDialog("認証エラー", event.error, viewModel.dismissError)
-                }
+        }
 
-                else -> {}
+        // 新規登録画面への遷移ボタン
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            TextButton(
+                onClick = onRegisterButtonClicked,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
+                enabled = uiState.event is SignInUiState.Event.Idle
+            ) {
+                Text(stringResource(id = R.string.to_registration))
             }
         }
-    }
-}
 
-@Preview
-@Composable
-fun SignInScreenPreview() {
-    TasteMapTheme {
-        SignInScreen(onRegisterButtonClicked = { /*TODO*/ }, onSignInButtonClicked = { /*TODO*/ })
+        // uiイベントに応じた画面を描画
+        when (val event = uiState.event) {
+            is SignInUiState.Event.Loading -> { FullScreenLoading() }
+            is SignInUiState.Event.SignInFailure -> {
+                ErrorDialog(
+                    stringResource(id = R.string.auth_error),
+                    event.error,
+                    viewModel.dismissDialog
+                )
+            }
+            // 1秒間だけログイン成功のアイコンを表示
+            is SignInUiState.Event.SignInSuccess -> {
+                LaunchedEffect(Unit) {
+                        showSuccessMessage = true
+                        delay(1000) // 1秒間表示する
+                        showSuccessMessage = false
+                        onSignInButtonClicked()
+                }
+            }
+            else -> {}
+        }
+
+        if (showSuccessMessage) {
+            SuccessIcon()
+        }
     }
 }

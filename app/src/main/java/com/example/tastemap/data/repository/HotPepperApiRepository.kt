@@ -3,16 +3,18 @@ package com.example.tastemap.data.repository
 import com.example.tastemap.data.api.hotpepper.HotPepperApiClient
 import com.example.tastemap.data.api.hotpepper.HotPepperApiRequest
 import com.example.tastemap.data.api.hotpepper.HotPepperApiResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class HotPepperApiRepository @Inject constructor(
-    private val apiClient: HotPepperApiClient
+    private val apiClient: HotPepperApiClient,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
 
     suspend fun fetchShops(request: HotPepperApiRequest): Result<HotPepperApiResponse> {
-        return withContext(Dispatchers.IO) {
+        return withContext(defaultDispatcher) {
             try {
                 val response = apiClient.fetchShops(request)
 
@@ -26,6 +28,5 @@ class HotPepperApiRepository @Inject constructor(
                 Result.failure(exception)
             }
         }
-
     }
 }

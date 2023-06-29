@@ -20,6 +20,4 @@ class PlacesApiClientImpl @Inject constructor(
             key = request.key
         )
     }
-
-
 }

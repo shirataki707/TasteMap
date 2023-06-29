@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="space_small">8.dp</dimen>
+    <dimen name="width_medium">300.dp</dimen>
+    <dimen name="padding_small">8.dp</dimen>
+    <dimen name="padding_medium">16.dp</dimen>
+    <dimen name="size_medium">200.dp</dimen>
+    <dimen name="border_small">1.dp</dimen>
+    <dimen name="corner_small">4.dp</dimen>
+</resources>

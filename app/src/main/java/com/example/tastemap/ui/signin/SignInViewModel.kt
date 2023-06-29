@@ -2,18 +2,11 @@ package com.example.tastemap.ui.signin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tastemap.data.repository.AuthRepository
-import com.example.tastemap.data.repository.AuthRepository_Factory
 import com.example.tastemap.domain.SignInUseCase
-import com.example.tastemap.ui.home.HomeUiState
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,15 +17,19 @@ class SignInViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState get() = _uiState.asStateFlow()
 
-    fun signIn(onSignInButtonClicked: () -> Unit) {
+    fun signIn() {
         _uiState.value = uiState.value.copy(event = SignInUiState.Event.Loading)
+
+        // SignInが正常に完了した時は完了メッセージを出して画面遷移
         val onSignInSuccess = {
-            _uiState.value = uiState.value.copy(event = SignInUiState.Event.Success)
-            onSignInButtonClicked()
+            _uiState.value = uiState.value.copy(event = SignInUiState.Event.SignInSuccess)
         }
+
+        // SignInが失敗した時はエラーダイアログを表示
         val onSignInFailure: (String) -> Unit = { error ->
-            _uiState.value = uiState.value.copy(event = SignInUiState.Event.Failure(error))
+            _uiState.value = uiState.value.copy(event = SignInUiState.Event.SignInFailure(error))
         }
+
         viewModelScope.launch {
             signInUseCase(
                 uiState.value.email,
@@ -53,13 +50,14 @@ class SignInViewModel @Inject constructor(
         checkButtonState()
     }
 
+    // メールアドレスとパスワードの両方が空ではない場合だけ，ログインボタンを有効にする
     private fun checkButtonState() {
         _uiState.value = uiState.value.copy(
             isSignInButtonEnabled = uiState.value.email.isNotBlank() && uiState.value.password.isNotBlank()
         )
     }
 
-    val dismissError: () -> Unit = {
+    val dismissDialog: () -> Unit = {
         _uiState.value = uiState.value.copy(event = SignInUiState.Event.Idle)
     }
 }

@@ -1,6 +1,102 @@
 <resources>
+    <!-- 整理しよう -->
     <string name="app_name">TasteMap</string>
-    <string name="signin">SignIn</string>
-    <string name="registration">Registration</string>
-    <string name="home">Home</string>
+    <string name="signin">ログイン</string>
+    <string name="registration">新規登録</string>
+    <string name="home">ホーム</string>
+    <string name="to_registration">アカウントを持っていない場合、新規登録はこちら</string>
+    <string name="back_signin">ログインはこちら</string>
+    <string name="auth_error">認証エラー</string>
+    <string name="error">エラー</string>
+    <string name="enter_password">パスワードを入力してください</string>
+    <string name="enter_email">メールアドレスを入力してください</string>
+    <string name="success">成功</string>
+    <string name="ok">OK</string>
+    <string name="signin_success">ログインに成功しました</string>
+    <string name="enter_username">ユーザ名を入力してください</string>
+    <string name="review_priority">飲食店の評価方法</string>
+    <string name="smoking_priority">喫煙・禁煙席の好み</string>
+    <string name="profile">プロフィール</string>
+    <string name="back_button">戻るボタン</string>
+    <string name="sign_out">ログアウト</string>
+    <string name="user_name"></string>
+    <string name="dropdown_text">%s: %s</string>
+    <string name="url">URL</string>
+    <string name="genre">検索ジャンル</string>
+    <string name="range">検索範囲</string>
+    <string name="search_restaurants">お店を検索</string>
+    <string name="restaurant">レストラン</string>
+    <string name="star_reviews">star: %s, reviews: %s</string>
+    <string name="price_level">価格レベル: $s</string>
+    <string name="opening">Opening: %s</string>
+    <string name="empty_restaurant_message">検索結果は0件でした。条件を変えて検索してください。</string>
+
+    <!-- Firebase Auth Error -->
+    <string name="email_already_exists">auth/email-already-exists</string>
+    <string name="internal_error">auth/internal-error</string>
+    <string name="invalid_email">auth/invalid-email</string>
+    <string name="invalid_password">auth/invalid-password</string>
+
+    <!-- rangeは5段階．1. 300m, 2. 500m, 3. 1000m(default), 4. 2000m, 5. 3000m -->
+    <string-array name="searchRanges">
+        <item>300m</item>
+        <item>500m</item>
+        <item>1km</item>
+        <item>2km</item>
+        <item>3km</item>
+    </string-array>
+
+    <string-array name="genres">
+        <item>指定なし</item>
+        <item>居酒屋</item>
+        <item>ダイニングバー・バル</item>
+        <item>創作料理</item>
+        <item>和食</item>
+        <item>洋食</item>
+        <item>イタリアン・フレンチ</item>
+        <item>中華</item>
+        <item>焼肉・ホルモン</item>
+        <item>韓国料理</item>
+        <item>アジア・エスニック料理</item>
+        <item>各国料理</item>
+        <item>カラオケ・パーティ</item>
+        <item>バー・カクテル</item>
+        <item>ラーメン</item>
+        <item>お好み焼き・もんじゃ</item>
+        <item>カフェ・スイーツ</item>
+        <item>その他グルメ</item>
+    </string-array>
+
+    <string-array name="genresCode">
+        <item></item>
+        <item>G001</item>
+        <item>G002</item>
+        <item>G003</item>
+        <item>G004</item>
+        <item>G005</item>
+        <item>G006</item>
+        <item>G007</item>
+        <item>G008</item>
+        <item>G017</item>
+        <item>G009</item>
+        <item>G010</item>
+        <item>G011</item>
+        <item>G012</item>
+        <item>G013</item>
+        <item>G016</item>
+        <item>G014</item>
+        <item>G015</item>
+    </string-array>
+
+    <string-array name="reviewPriorities">
+        <item>好みはない</item>
+        <item>星の数を重視</item>
+        <item>レビュー数を重視</item>
+    </string-array>
+
+    <string-array name="smokingPriorities">
+        <item>好みはない</item>
+        <item>禁煙席のみ</item>
+        <item>喫煙席のみ</item>
+    </string-array>
 </resources>
