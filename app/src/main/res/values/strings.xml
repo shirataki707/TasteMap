@@ -18,6 +18,8 @@
     <string name="back_button">戻るボタン</string>
     <string name="sign_out">ログアウト</string>
     <string name="user_name"></string>
+    <string name="dropdown_text">%s: %s</string>
+    <string name="url">URL</string>
 
     <!-- Firebase Auth Error -->
     <string name="email_already_exists">auth/email-already-exists</string>

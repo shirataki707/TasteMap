@@ -22,15 +22,19 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.tastemap.R
 
+// ローディング画面
 @Composable
-fun FullScreenLoading() {
-    Box(modifier = Modifier
+fun FullScreenLoading(
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier
         .fillMaxSize()
         .background(Color.White.copy(alpha = 0.7f))) {
         CircularProgressIndicator(Modifier.align(Alignment.Center))
     }
 }
 
+// エラーダイアログ
 @Composable
 fun ErrorDialog(
     titleMessage: String,
@@ -45,28 +49,17 @@ fun ErrorDialog(
             TextButton(
                 onClick = onDismissRequest
             ) {
-                Text(text = "OK")
+                Text(text = stringResource(id = R.string.ok))
             }
         }
     )
 }
 
+// ログインや登録成功時の画面
 @Composable
-fun SuccessDialog(message: String, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.success)) },
-        text = { Text(message) },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.ok))
-            }
-        }
-    )
-}
-
-@Composable
-fun SuccessIcon() {
+fun SuccessIcon(
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -79,17 +72,9 @@ fun SuccessIcon() {
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = stringResource(id = R.string.signin_success),
                 tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(dimensionResource(id = R.dimen.size_medium))
+                modifier = modifier.size(dimensionResource(id = R.dimen.size_medium))
             )
 
         }
     }
 }
-
-
-
-
-
-
-
-

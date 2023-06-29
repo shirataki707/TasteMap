@@ -35,15 +35,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import com.example.tastemap.R
 
+// パスワード入力欄
 @Composable
 fun PasswordTextField(
+    modifier: Modifier = Modifier,
     password: String,
     onPasswordChange: (String) -> Unit,
-    enabled: Boolean,
-    modifier: Modifier = Modifier
+    enabled: Boolean
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
     TextField(
@@ -57,12 +57,13 @@ fun PasswordTextField(
     )
 }
 
+// メールアドレス入力欄
 @Composable
 fun EmailTextField(
+    modifier: Modifier = Modifier,
     email: String,
     onEmailChange: (String) -> Unit,
-    enabled: Boolean,
-    modifier: Modifier = Modifier
+    enabled: Boolean
 ) {
     @OptIn(ExperimentalMaterial3Api::class)
     TextField(
@@ -74,27 +75,39 @@ fun EmailTextField(
     )
 }
 
+// ドロップダウンリスト
 @Composable
 fun DropdownList(
+    modifier: Modifier = Modifier,
     caption: String,
     items: List<String>,
     selectedIndex: Int,
-    onSelectedChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    onSelectedChange: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .border(1.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(4.dp))
+        modifier = modifier
+            .padding(dimensionResource(id = R.dimen.padding_medium))
+            .border(
+                dimensionResource(id = R.dimen.border_small),
+                MaterialTheme.colorScheme.onSurface, RoundedCornerShape(
+                    dimensionResource(
+                        id = R.dimen.corner_small
+                    )
+                )
+            )
             .background(MaterialTheme.colorScheme.surface)
-            .width(300.dp),
+            .width(dimensionResource(id = R.dimen.width_medium)),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "$caption: ${items[selectedIndex]}",
-            modifier = Modifier.clickable { expanded = true }
+            text = stringResource(
+                id = R.string.dropdown_text,
+                "$caption",
+                "${items[selectedIndex]}"
+            ),
+            modifier = modifier.clickable { expanded = true }
         )
 
         DropdownMenu(
@@ -111,14 +124,16 @@ fun DropdownList(
     }
 }
 
+// ハイパーリンクのテキスト
 @Composable
 fun HyperlinkText(url: String) {
     val context = LocalContext.current
+    val tag = stringResource(id = R.string.url)
     val annotatedString = buildAnnotatedString {
         withStyle(style = SpanStyle(textDecoration = TextDecoration.LineThrough)) {
             append(url)
             addStringAnnotation(
-                tag = "URL",
+                tag = tag,
                 annotation = url,
                 start = 0,
                 end = url.length
@@ -130,27 +145,10 @@ fun HyperlinkText(url: String) {
         text = annotatedString,
         style = MaterialTheme.typography.bodyMedium.copy(color = Color.Blue),
         onClick = { offset ->
-            annotatedString.getStringAnnotations("URL", offset, offset).firstOrNull()?.let { annotation ->
+            annotatedString.getStringAnnotations("$tag", offset, offset).firstOrNull()?.let { annotation ->
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
                 context.startActivity(intent)
             }
         }
     )
 }
-
-
-//@OptIn(ExperimentalPermissionsApi::class)
-//@Composable
-//fun PermissionRequest() {
-//    val permissionState = rememberPermissionState(Manifest.permission.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION)
-//    when {
-//        permissionState.hasPermission -> Text("Granted!")
-//        permissionState.shouldShowRationale -> PermissionRationaleDialog {
-//            permissionState.launchPermissionRequest()
-//        }
-//        permissionState.permissionRequested -> Text("Denied...")
-//        else -> SideEffect {
-//            permissionState.launchPermissionRequest()
-//        }
-//    }
-//}
