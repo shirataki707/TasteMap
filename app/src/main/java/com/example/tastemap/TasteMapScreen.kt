@@ -26,6 +26,8 @@ enum class TasteMapScreen {
     Profile
 }
 
+// [WARNING] Navigation時のStackに注意．
+
 @Composable
 fun TasteMapApp(
     navController: NavHostController = rememberNavController()
@@ -62,7 +64,8 @@ fun TasteMapApp(
                 onPopBackButtonClicked = { navController.navigateUp() },
                 onRegisterButtonClicked = {
                     navController.navigate(TasteMapScreen.Home.name) {
-                        launchSingleTop = true
+//                        launchSingleTop = true
+                        // [NOTE] 登録画面は絶対にログイン画面をスタックにもつため
                         popUpTo(TasteMapScreen.SignIn.name) { inclusive = true }
                     }
                 }
@@ -86,7 +89,8 @@ fun TasteMapApp(
                 navigateUp = { navController.navigateUp() },
                 onSignOutClicked = {
                     navController.navigate(TasteMapScreen.SignIn.name) {
-                        popUpTo(TasteMapScreen.Profile.name) {
+                        // [NOTE] プロフィール画面は絶対にホーム画面をスタックにもつため
+                        popUpTo(TasteMapScreen.Home.name) {
                             inclusive = true
                         }
                     }
