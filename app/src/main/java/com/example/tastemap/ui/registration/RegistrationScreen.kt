@@ -35,6 +35,8 @@ import com.example.tastemap.ui.components.PasswordTextField
 import com.example.tastemap.ui.components.SuccessIcon
 import kotlinx.coroutines.delay
 
+// [TODO] 架空のメールアドレスで登録できるので，メール認証をする
+
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,

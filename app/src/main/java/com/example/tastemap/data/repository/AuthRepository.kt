@@ -2,14 +2,15 @@ package com.example.tastemap.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.Exception
 
 class AuthRepository @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     suspend fun createAccount(
         email: String,
@@ -17,7 +18,7 @@ class AuthRepository @Inject constructor(
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit,
     ) {
-        withContext(Dispatchers.IO) {
+        withContext(defaultDispatcher) {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -39,7 +40,7 @@ class AuthRepository @Inject constructor(
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        withContext(Dispatchers.IO) {
+        withContext(defaultDispatcher) {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -56,22 +57,17 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun signOut() {
-        withContext(Dispatchers.IO) {
+        withContext(defaultDispatcher) {
             auth.signOut()
         }
     }
 
-//    suspend fun isUserLoggedIn(): Boolean {
-//        return withContext(Dispatchers.IO) {
-//            auth.currentUser != null
-//        }
-//    }
     fun isUserLoggedIn(): Boolean {
         return auth.currentUser != null
     }
 
     suspend fun fetchCurrentUser(): FirebaseUser? {
-        return withContext(Dispatchers.IO) {
+        return withContext(defaultDispatcher) {
             auth.currentUser
         }
     }

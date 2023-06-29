@@ -1,8 +1,5 @@
 package com.example.tastemap.di
 
-import com.example.tastemap.data.api.hotpepper.HotPepperApiClient
-import com.example.tastemap.data.api.hotpepper.HotPepperApiClientImpl
-import com.example.tastemap.data.api.hotpepper.HotPepperApiService
 import com.example.tastemap.data.api.places.PlacesApiClient
 import com.example.tastemap.data.api.places.PlacesApiClientImpl
 import com.example.tastemap.data.api.places.PlacesApiService

@@ -19,7 +19,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val searchRestaurantsUseCase: SearchRestaurantsUseCase,
-    private val fetchUserDetailsUseCase: FetchUserDetailsUseCase
+    private val fetchUserDetailsUseCase: FetchUserDetailsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -46,6 +46,7 @@ class HomeViewModel @Inject constructor(
             _uiState.value = uiState.value.copy(restaurants = restaurants)
 
         }
+
         val onFailure: (String) -> Unit =  { error ->
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
         }
@@ -60,9 +61,6 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-    fun signOut() {
-        viewModelScope.launch { signOutUseCase() }
-    }
 
     private fun fetchUserDetails() {
         _uiState.value = uiState.value.copy(event = HomeUiState.Event.Loading)
@@ -74,7 +72,6 @@ class HomeViewModel @Inject constructor(
         }
         val onFailure: (String) -> Unit =  { error ->
             _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
-            Timber.e("fetchuserdetail error")
         }
         viewModelScope.launch {
             fetchUserDetailsUseCase(onSuccess, onFailure)
@@ -100,5 +97,4 @@ class HomeViewModel @Inject constructor(
     fun updateIsSortOptionChecked(newBoolean: Boolean) {
         _uiState.value = uiState.value.copy(isSortOptionSelected = newBoolean)
     }
-
 }

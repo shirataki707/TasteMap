@@ -1,4 +1,5 @@
 <resources>
+    <!-- 整理しよう -->
     <string name="app_name">TasteMap</string>
     <string name="signin">ログイン</string>
     <string name="registration">新規登録</string>
@@ -6,6 +7,7 @@
     <string name="to_registration">アカウントを持っていない場合、新規登録はこちら</string>
     <string name="back_signin">ログインはこちら</string>
     <string name="auth_error">認証エラー</string>
+    <string name="error">エラー</string>
     <string name="enter_password">パスワードを入力してください</string>
     <string name="enter_email">メールアドレスを入力してください</string>
     <string name="success">成功</string>
@@ -20,6 +22,14 @@
     <string name="user_name"></string>
     <string name="dropdown_text">%s: %s</string>
     <string name="url">URL</string>
+    <string name="genre">検索ジャンル</string>
+    <string name="range">検索範囲</string>
+    <string name="search_restaurants">お店を検索</string>
+    <string name="restaurant">レストラン</string>
+    <string name="star_reviews">star: %s, reviews: %s</string>
+    <string name="price_level">価格レベル: $s</string>
+    <string name="opening">Opening: %s</string>
+    <string name="empty_restaurant_message">検索結果は0件でした。条件を変えて検索してください。</string>
 
     <!-- Firebase Auth Error -->
     <string name="email_already_exists">auth/email-already-exists</string>

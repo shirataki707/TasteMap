@@ -4,11 +4,14 @@ import com.example.tastemap.data.model.Genre
 import com.example.tastemap.data.model.HotPepperApiResults
 import com.example.tastemap.data.model.Shop
 import com.example.tastemap.data.model.Urls
+import kotlinx.coroutines.delay
 import retrofit2.Response
 import javax.inject.Inject
 
 class HotPepperMockApiClientImpl @Inject constructor(): HotPepperApiClient {
     override suspend fun fetchShops(request: HotPepperApiRequest): Response<HotPepperApiResponse> {
+        delay(1000) // simulate network delay
+
         val dummyResponse = createDummyResponse()
         return Response.success(dummyResponse)
     }
@@ -59,5 +62,4 @@ class HotPepperMockApiClientImpl @Inject constructor(): HotPepperApiClient {
             )
         )
     }
-
 }
