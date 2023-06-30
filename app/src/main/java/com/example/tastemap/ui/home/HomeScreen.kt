@@ -47,7 +47,7 @@ import com.example.tastemap.data.model.Location
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.ErrorDialog
-import com.example.tastemap.ui.components.FullScreenAnimationLoading
+import com.example.tastemap.ui.components.FullScreenLoading
 import com.example.tastemap.ui.components.HyperlinkText
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -154,7 +154,7 @@ fun HomeScreen(
 
             when (val event = uiState.event) {
                 is HomeUiState.Event.Loading -> {
-                    FullScreenAnimationLoading()
+                    FullScreenLoading()
                 }
                 is HomeUiState.Event.Failure -> {
                     ErrorDialog(stringResource(id = R.string.error), event.error, viewModel.dismissError)

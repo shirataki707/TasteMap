@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.tastemap.ui.theme.TasteMapTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -68,7 +69,9 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            TasteMapApp()
+            TasteMapTheme {
+                TasteMapApp()
+            }
         }
     }
 }
