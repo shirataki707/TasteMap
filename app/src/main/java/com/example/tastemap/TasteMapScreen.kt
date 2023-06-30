@@ -1,5 +1,6 @@
 package com.example.tastemap
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,8 +51,10 @@ fun TasteMapApp(
                 viewModel = signInViewModel,
                 onRegisterButtonClicked = { navController.navigate(TasteMapScreen.Registration.name) },
                 onSignInButtonClicked = {
+                    navController.logBackStack()
                     navController.navigate(TasteMapScreen.Home.name) {
                         popUpTo(TasteMapScreen.SignIn.name) { inclusive = true }
+                        navController.logBackStack()
                     }
                 }
             )
@@ -63,10 +66,11 @@ fun TasteMapApp(
                 viewModel = registrationViewModel,
                 onPopBackButtonClicked = { navController.navigateUp() },
                 onRegisterButtonClicked = {
+                    navController.logBackStack()
                     navController.navigate(TasteMapScreen.Home.name) {
-//                        launchSingleTop = true
                         // [NOTE] 登録画面は絶対にログイン画面をスタックにもつため
                         popUpTo(TasteMapScreen.SignIn.name) { inclusive = true }
+                        navController.logBackStack()
                     }
                 }
             )
@@ -77,7 +81,9 @@ fun TasteMapApp(
             HomeScreen(
                 viewModel = homeViewModel,
                 onProfileButtonClicked = {
+                    navController.logBackStack()
                     navController.navigate(TasteMapScreen.Profile.name)
+                    navController.logBackStack()
                 }
             )
         }
@@ -88,14 +94,22 @@ fun TasteMapApp(
                 viewModel = profileViewModel,
                 navigateUp = { navController.navigateUp() },
                 onSignOutClicked = {
+                    navController.logBackStack()
                     navController.navigate(TasteMapScreen.SignIn.name) {
                         // [NOTE] プロフィール画面は絶対にホーム画面をスタックにもつため
                         popUpTo(TasteMapScreen.Home.name) {
                             inclusive = true
                         }
+                        navController.logBackStack()
                     }
                 }
             )
         }
     }
 }
+
+fun NavHostController.logBackStack() {
+    val backStack = this.backQueue.map { it.destination.route }
+    Log.d("Navigation", "Current back stack: $backStack")
+}
+
