@@ -94,6 +94,10 @@ class HomeViewModel @Inject constructor(
         _uiState.value = uiState.value.copy(keyword = newKeyword)
     }
 
+    fun updateErrorUiState(error: String) {
+        _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
+    }
+
     fun updateIsSortOptionChecked(newBoolean: Boolean) {
         _uiState.value = uiState.value.copy(isSortOptionSelected = newBoolean)
     }

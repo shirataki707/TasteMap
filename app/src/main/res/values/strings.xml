@@ -30,6 +30,7 @@
     <string name="price_level">価格レベル: $s</string>
     <string name="opening">Opening: %s</string>
     <string name="empty_restaurant_message">検索結果は0件でした。条件を変えて検索してください。</string>
+    <string name="error_location">位置情報の取得に失敗しました。権限を確認するか再度実行してください。</string>
 
     <!-- Firebase Auth Error -->
     <string name="email_already_exists">auth/email-already-exists</string>

@@ -47,9 +47,14 @@ import com.example.tastemap.data.model.Location
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.ErrorDialog
-import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.FullScreenAnimationLoading
 import com.example.tastemap.ui.components.HyperlinkText
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 import java.util.Locale
 
@@ -90,6 +95,11 @@ fun HomeScreen(
     val genres = stringArrayResource(id = R.array.genres).toList()
     val genresCode = stringArrayResource(id = R.array.genresCode).toList()
     val searchRange = stringArrayResource(id = R.array.searchRanges).toList()
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    val locationErrorMessage = stringResource(id = R.string.error_location)
 
     Scaffold(
         topBar = {
@@ -135,15 +145,23 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         // [TODO] 現在地を取得しよう
-                        val request = HotPepperApiRequest(
-                            lat = 33.652294,
-                            lng = 130.672144,
-                            range = uiState.searchRangeIndex + 1, // [NOTE] apiのrangeは1から始まるが，uiStateは0から始まるため
-                            keyword = uiState.keyword,
-                            genre = genresCode[uiState.genreIndex]
-                        )
+                        coroutineScope.launch {
+                            val startLocation = getCurrentLocation(fusedLocationClient)
+                            if (startLocation != null) {
+                                val request = HotPepperApiRequest(
+                                    lat = startLocation.latitude,
+                                    lng = startLocation.longitude,
+                                    range = uiState.searchRangeIndex + 1, // [NOTE] apiのrangeは1から始まるが，uiStateは0から始まるため
+                                    keyword = uiState.keyword,
+                                    genre = genresCode[uiState.genreIndex]
+                                )
+                                viewModel.searchRestaurants(request)
+                            } else {
+                                // Handle case when location is null
+                                viewModel.updateErrorUiState(locationErrorMessage)
+                            }
+                        }
 
-                        viewModel.searchRestaurants(request)
                     }
                 ) {
                     Text(stringResource(id = R.string.search_restaurants))
@@ -154,7 +172,7 @@ fun HomeScreen(
 
             when (val event = uiState.event) {
                 is HomeUiState.Event.Loading -> {
-                    FullScreenLoading()
+                    FullScreenAnimationLoading()
                 }
                 is HomeUiState.Event.Failure -> {
                     ErrorDialog(stringResource(id = R.string.error), event.error, viewModel.dismissError)
@@ -181,16 +199,19 @@ fun RestaurantsList(restaurants: List<Restaurant>) {
 fun Restaurant(restaurantDetail: Restaurant) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     Card(modifier = Modifier
         .padding(dimensionResource(id = R.dimen.padding_medium))
         .wrapContentSize()
         .clickable {
             coroutineScope.launch {
-                // [TODO] ここを現在地の座標にする必要がある
-                // 位置情報をアプリが取得できるようにパーミションを与え，現在地を設定
-                val start = Location(33.6537617, 130.6729035)
-                openGoogleMap(context, start, restaurantDetail.name)
+                val startLocation = getCurrentLocation(fusedLocationClient)
+                if (startLocation != null) {
+                    openGoogleMap(context, startLocation, restaurantDetail.name)
+                } else {
+                    // Handle case when location is null
+                }
             }
         }
     ) {
@@ -256,5 +277,19 @@ fun RestaurantContent(
             )
             HyperlinkText(url = restaurantDetail.website)
         }
+    }
+}
+
+private suspend fun getCurrentLocation(fusedLocationClient: FusedLocationProviderClient): Location? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val lastLocation = fusedLocationClient.lastLocation.await()
+            if (lastLocation != null) {
+                return@withContext Location(lastLocation.latitude, lastLocation.longitude)
+            }
+        } catch (e: SecurityException) {
+            // Handle the exception appropriately in your app
+        }
+        return@withContext null
     }
 }
