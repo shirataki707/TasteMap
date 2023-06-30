@@ -9,17 +9,9 @@ import android.view.animation.AccelerateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -80,20 +72,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@Composable
-fun SplashScreen(onAnimationFinished: () -> Unit) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash))
-    val progress by animateLottieCompositionAsState(composition)
-
-    LottieAnimation(
-        composition = composition,
-        progress = progress
-    )
-
-    LaunchedEffect(Unit) {
-        delay(5000L)  // Delay for 5 seconds
-        onAnimationFinished()
-    }
-}
-

@@ -30,9 +30,9 @@ import com.example.tastemap.R
 import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
-import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.FullScreenAnimationLoading
 import com.example.tastemap.ui.components.PasswordTextField
-import com.example.tastemap.ui.components.SuccessIcon
+import com.example.tastemap.ui.components.SuccessAnimation
 import kotlinx.coroutines.delay
 
 // [TODO] 架空のメールアドレスで登録できるので，メール認証をする
@@ -137,7 +137,7 @@ fun RegistrationScreen(
 
         // uiイベントに応じた画面を描画
         when (val event = uiState.event) {
-            is RegistrationUiState.Event.Loading -> { FullScreenLoading() }
+            is RegistrationUiState.Event.Loading -> { FullScreenAnimationLoading() }
             is RegistrationUiState.Event.RegisterFailure -> {
                 ErrorDialog(
                     stringResource(id = R.string.auth_error),
@@ -157,7 +157,7 @@ fun RegistrationScreen(
             else -> {}
         }
         if (showSuccessMessage) {
-            SuccessIcon()
+            SuccessAnimation()
         }
     }
 }

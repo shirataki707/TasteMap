@@ -26,9 +26,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tastemap.R
 import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
-import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.FullScreenAnimationLoading
 import com.example.tastemap.ui.components.PasswordTextField
-import com.example.tastemap.ui.components.SuccessIcon
+import com.example.tastemap.ui.components.SuccessAnimation
 import kotlinx.coroutines.delay
 
 @Composable
@@ -98,7 +98,7 @@ fun SignInScreen(
 
         // uiイベントに応じた画面を描画
         when (val event = uiState.event) {
-            is SignInUiState.Event.Loading -> { FullScreenLoading() }
+            is SignInUiState.Event.Loading -> { FullScreenAnimationLoading() }
             is SignInUiState.Event.SignInFailure -> {
                 ErrorDialog(
                     stringResource(id = R.string.auth_error),
@@ -119,7 +119,7 @@ fun SignInScreen(
         }
 
         if (showSuccessMessage) {
-            SuccessIcon()
+            SuccessAnimation()
         }
     }
 }
