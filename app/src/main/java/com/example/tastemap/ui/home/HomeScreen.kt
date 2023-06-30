@@ -144,7 +144,6 @@ fun HomeScreen(
 
                 Button(
                     onClick = {
-                        // [TODO] 現在地を取得しよう
                         coroutineScope.launch {
                             val startLocation = getCurrentLocation(fusedLocationClient)
                             if (startLocation != null) {

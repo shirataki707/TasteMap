@@ -155,6 +155,7 @@ class SearchRestaurantsUseCase @Inject constructor(
             val placeDetailRequest = PlacesApiDetailRequest(placeId = placeId)
             val placeDetail = fetchPlaceDetail(scope, placeDetailRequest)
             placeDetail.onSuccess { response ->
+                Timber.d("detail response: ${response.result}")
                 placeDetails.add(response.result)
             }
             placeDetail.onFailure { Timber.e(it.toString()) }
@@ -177,10 +178,10 @@ class SearchRestaurantsUseCase @Inject constructor(
                     rating = placeDetails[i].rating,
                     userReviews = placeDetails[i].userRatingTotal,
                     location = Location(latitude = shops[i].lat, longitude = shops[i].lng),
-                    isOpenNow = placeDetails[i].currentOpeningHours.openNow,
-                    weekdayText = placeDetails[i].currentOpeningHours.weekdayText,
-                    priceLevel = placeDetails[i].priceLevel,
-                    website = placeDetails[i].website
+                    isOpenNow = placeDetails[i].currentOpeningHours?.openNow ?: false,
+                    weekdayText = placeDetails[i].currentOpeningHours?.weekdayText ?: listOf(""),
+                    priceLevel = placeDetails[i]?.priceLevel ?: -1,
+                    website = placeDetails[i]?.website ?: "non url"
                 )
             )
         }
