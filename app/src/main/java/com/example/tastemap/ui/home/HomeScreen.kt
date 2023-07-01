@@ -117,7 +117,6 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.space_small))
             ) {
 
-                // [NOTE] なんかうまく検索できない
                 @OptIn(ExperimentalMaterial3Api::class)
                 TextField(
                     value = uiState.keyword,
@@ -242,59 +241,22 @@ private fun openGoogleMap(context: Context, start: Location, destination: String
     context.startActivity(intent)
 }
 
-// レストラン情報の中身
+// [TODO] レストラン情報の中身を表示
 @Composable
 fun RestaurantContent(
     modifier: Modifier = Modifier,
     restaurantDetail: Restaurant
 ) {
-    // [TODO] 画像がnullじゃないなら表示
     Column {
-//        if (restaurantDetail.image != null) {
-//            Image(
-//                painter = rememberImagePainter(data = restaurantDetail.image), // Coilを使用して画像を非同期に読み込む
-//                contentDescription = stringResource(id = R.string.restaurant),
-//                modifier = modifier
-//                    .fillMaxWidth()
-//                    .aspectRatio(ratio = 1.7731f), // 344x194
-//                alignment = Alignment.Center,
-//                contentScale = ContentScale.Crop,
-//                loading = {
-//                    // 画像がロードされるまでのプレースホルダー
-//                    Image(
-//                        painter = painterResource(R.drawable.ic_launcher_foreground),
-//                        contentDescription = ""
-//                    )
-//                },
-//                error = {
-//                    // 画像の読み込みエラー時のプレースホルダー
-//                    Image(
-//                        painter = painterResource(R.drawable.ic_launcher_foreground),
-//                        contentDescription = stringResource(id = R.string.restaurant_loading_error)
-//                    )
-//                }
-//            )
-//        } else {
-            // restaurantDetail.imageがnullの場合の画像
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = stringResource(id = R.string.restaurant),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .aspectRatio(ratio = 1.7731f), // 344x194
-                alignment = Alignment.Center,
-                contentScale = ContentScale.Crop
-            )
-//        }
-//        Image(
-//            painter = painterResource(R.drawable.ic_launcher_foreground),
-//            contentDescription = stringResource(id = R.string.restaurant),
-//            modifier = modifier
-//                .fillMaxWidth()
-//                .aspectRatio(ratio = 1.7731f), // 344x194
-//            alignment = Alignment.Center,
-//            contentScale = ContentScale.Crop
-//        )
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = stringResource(id = R.string.restaurant),
+            modifier = modifier
+                .fillMaxWidth()
+                .aspectRatio(ratio = 1.7731f), // 344x194
+            alignment = Alignment.Center,
+            contentScale = ContentScale.Crop
+        )
         Column(Modifier.padding(dimensionResource(id = R.dimen.padding_medium))) {
             Text(
                 "${restaurantDetail.name}",

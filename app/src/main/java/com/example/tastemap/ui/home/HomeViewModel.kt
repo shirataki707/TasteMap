@@ -53,11 +53,12 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             searchRestaurantsUseCase(
-                this,
-                request,
-                uiState.value.isSortOptionSelected,
-                onSuccess,
-                onFailure
+                scope = this,
+                request = request,
+                isSortSelected = uiState.value.isSortOptionSelected,
+                userPreferences = uiState.value.userPreferences,
+                onSuccess = onSuccess,
+                onFailure = onFailure
             )
         }
     }

@@ -12,6 +12,7 @@ import com.example.tastemap.data.model.PlaceDetailResult
 import com.example.tastemap.data.model.PlaceId
 import com.example.tastemap.data.model.Restaurant
 import com.example.tastemap.data.model.Shop
+import com.example.tastemap.data.model.UserPreferences
 import com.example.tastemap.data.repository.HotPepperApiRepository
 import com.example.tastemap.data.repository.PlacesApiRepository
 import kotlinx.coroutines.CoroutineScope
@@ -28,17 +29,20 @@ class SearchRestaurantsUseCase @Inject constructor(
         scope: CoroutineScope,
         request: HotPepperApiRequest,
         isSortSelected: Boolean,
+        userPreferences: UserPreferences,
         onSuccess: (List<Restaurant>) -> Unit,
         onFailure: (String) -> Unit
     ) {
         try {
             // HotPepperAPIからN件のレストランを検索して好みのものだけ返す
-            val shops: List<Shop> = fetchPreferenceShops(scope, request)
+            // [TODO] 好み(userPreferences)を反映
+            val shops: List<Shop> = fetchPreferenceShops(scope, request, userPreferences)
 
             Timber.d("shops: $shops")
 
             // Googleの星とレビュー数でソートする場合
             // shopsの全ての飲食店のPlaceIDを取得
+            // [TODO] 最近傍のPlaceIDを返す
             val placeIds: List<String> = fetchPlaceIds(scope, shops)
 
             Timber.d("placeIds: $placeIds")
@@ -54,13 +58,14 @@ class SearchRestaurantsUseCase @Inject constructor(
             Timber.d("placeDetails: $placeDetails")
 
             // HotPepperとPlacesのレスポンスからUIで使うお店情報を作成
-            val restaurants: List<Restaurant> = createRestaurantsFromResponse(filteredShops, placeDetails)
+            // [TODO] UIで表示するデータを作ろう
+            var restaurants: List<Restaurant> = createRestaurantsFromResponse(filteredShops, placeDetails)
 
             Timber.d("restaurants: $restaurants")
 
             // [TODO] 星とレビュー数などからソートしよう
             if (isSortSelected) {
-
+                restaurants = sortRestaurants(restaurants)
             }
 
             onSuccess(restaurants)
@@ -73,6 +78,7 @@ class SearchRestaurantsUseCase @Inject constructor(
 
     }
 
+    // 空のPlaceIDがあるお店を除外
     private fun filterEmptyIDs(shops: List<Shop>, placeIds: List<String>): Pair<List<Shop>, List<String>> {
         val zipped = shops.zip(placeIds)
         val filtered = zipped.filter { (_, id) -> id.isNotEmpty() }
@@ -94,13 +100,14 @@ class SearchRestaurantsUseCase @Inject constructor(
     // fetchShopsで得たお店から好みのお店のみ抽出して返す．
     private suspend fun fetchPreferenceShops(
         scope: CoroutineScope,
-        request: HotPepperApiRequest
+        request: HotPepperApiRequest,
+        userPreferences: UserPreferences
     ): List<Shop> {
         val shopsResult = fetchShops(scope, request)
         var shops: List<Shop> = listOf()
         shopsResult.onSuccess { response ->
             // 好み情報を反映したレストランのみ抽出
-            shops = applyPreference(response.results.shop)
+            shops = applyPreference(response.results.shop, userPreferences)
             // シャッフルした後20件程度にして返す．20件に満たない場合はリスト全体
             shops = shops.shuffled().take(20)
         }
@@ -203,8 +210,8 @@ class SearchRestaurantsUseCase @Inject constructor(
     }
 
     // 好み情報を反映したリストを返す．
-    private fun applyPreference(shopList: List<Shop>): List<Shop> {
-        // [TODO] shopListから，好みを抜き出し，ランダムにソート, 20件程度にして返す(ID, Detailのリクエスト回数削減)
+    private fun applyPreference(shopList: List<Shop>, userPreferences: UserPreferences): List<Shop> {
+        // [TODO] shopListから好みを抜き出し, 20件程度にして返す(ID, Detailのリクエスト回数削減)
         return shopList
     }
 
@@ -215,6 +222,11 @@ class SearchRestaurantsUseCase @Inject constructor(
             ?: photo?.pc?.m.takeIf { !it.isNullOrEmpty() }
             ?: photo?.pc?.s.takeIf { !it.isNullOrEmpty() }
             ?: photo?.mobile?.s.takeIf { !it.isNullOrEmpty() }
+    }
+
+    // [TODO] 独自のソートロジックを適用
+    private fun sortRestaurants(restaurants: List<Restaurant>): List<Restaurant> {
+        return restaurants
     }
 
     companion object {
