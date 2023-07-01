@@ -27,7 +27,7 @@ class RegistrationViewModel @Inject constructor(
             smokingPriorities = uiState.value.smokingPrioritiesIndex
         )
 
-        // Registerが正常に完了した時は完了メッセージを出して画面遷移
+        // Registerが正常に完了した時はメール送信ダイアログ．ダイアログがOKならログイン画面に戻す
         val onRegisterSuccess = {
             _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.RegisterSuccess)
         }
@@ -83,5 +83,10 @@ class RegistrationViewModel @Inject constructor(
 
     val dismissDialog: () -> Unit = {
         _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.Idle)
+    }
+
+    val dismissEmailValidDialog: (() -> Unit) -> Unit = { onEmailValidClicked ->
+        _uiState.value = uiState.value.copy(event = RegistrationUiState.Event.Idle)
+        onEmailValidClicked()
     }
 }

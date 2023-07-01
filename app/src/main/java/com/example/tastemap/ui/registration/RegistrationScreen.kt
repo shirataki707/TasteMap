@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -41,13 +42,13 @@ import kotlinx.coroutines.delay
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
     viewModel: RegistrationViewModel = viewModel(),
-    onPopBackButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit
+    onPopBackButtonClicked: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
 
     var showSuccessMessage by remember { mutableStateOf(false) }
+    var showEmailValidDialog by remember { mutableStateOf(false) }
 
     val reviewPriorities = stringArrayResource(id = R.array.reviewPriorities).toList()
     val smokingPriorities = stringArrayResource(id = R.array.smokingPriorities).toList()
@@ -149,9 +150,16 @@ fun RegistrationScreen(
             is RegistrationUiState.Event.RegisterSuccess -> {
                 LaunchedEffect(Unit) {
                     showSuccessMessage = true
-                    delay(1000) // 1秒間表示する
+                    delay(2000) // 2秒間表示する
                     showSuccessMessage = false
-                    onRegisterButtonClicked()
+                    showEmailValidDialog = true
+                }
+                if (showEmailValidDialog) {
+                    ValidEmailSendDialog(
+                        titleMessage = "登録したアドレスにメールを送信しました",
+                        message = "認証をしてください",
+                        onDismissRequest = { viewModel.dismissEmailValidDialog(onPopBackButtonClicked) }
+                    )
                 }
             }
             else -> {}
@@ -160,4 +168,25 @@ fun RegistrationScreen(
             SuccessAnimation()
         }
     }
+}
+
+// 認証メール送信ダイアログ
+@Composable
+fun ValidEmailSendDialog(
+    titleMessage: String,
+    message: String,
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(text = titleMessage) },
+        text = { Text(text = message) },
+        confirmButton = {
+            TextButton(
+                onClick = onDismissRequest
+            ) {
+                Text(text = "認証しました")
+            }
+        }
+    )
 }

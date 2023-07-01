@@ -118,7 +118,7 @@ fun SignInScreen(
             is SignInUiState.Event.SignInSuccess -> {
                 LaunchedEffect(Unit) {
                         showSuccessMessage = true
-                        delay(1000) // 1秒間表示する
+                        delay(2000) // 2秒間表示する
                         showSuccessMessage = false
                         onSignInButtonClicked()
                 }

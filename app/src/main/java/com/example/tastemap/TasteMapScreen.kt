@@ -64,15 +64,7 @@ fun TasteMapApp(
             val registrationViewModel = hiltViewModel<RegistrationViewModel>(backStackEntry)
             RegistrationScreen(
                 viewModel = registrationViewModel,
-                onPopBackButtonClicked = { navController.navigateUp() },
-                onRegisterButtonClicked = {
-                    navController.logBackStack()
-                    navController.navigate(TasteMapScreen.Home.name) {
-                        // [NOTE] 登録画面は絶対にログイン画面をスタックにもつため
-                        popUpTo(TasteMapScreen.SignIn.name) { inclusive = true }
-                        navController.logBackStack()
-                    }
-                }
+                onPopBackButtonClicked = { navController.navigateUp() }
             )
         }
 

@@ -35,6 +35,7 @@
     <string name="non_rating">評価なし</string>
     <string name="non_reviews">レビューなし</string>
     <string name="non_website">ウェブサイトなし</string>
+    <string name="error_valid_mail_send">認証メールの送信に失敗しました。</string>
 
     <!-- Firebase Auth Error -->
     <string name="email_already_exists">auth/email-already-exists</string>
