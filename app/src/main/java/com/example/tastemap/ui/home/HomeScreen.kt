@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -122,7 +123,11 @@ fun HomeScreen(
                     value = uiState.keyword,
                     onValueChange = { keyword -> viewModel.updateKeyword(keyword) },
                     label = { Text("検索キーワード (任意)") },
-                    modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                    maxLines = 1,
+                    singleLine = true,
+                    modifier = modifier
+                        .padding(dimensionResource(id = R.dimen.padding_medium))
+                        .width(dimensionResource(id = R.dimen.width_medium))
                 )
 
                 DropdownList(

@@ -6,10 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,11 +34,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tastemap.R
 
 // パスワード入力欄
@@ -56,10 +49,12 @@ fun PasswordTextField(
         value = password,
         onValueChange = onPasswordChange,
         label = { Text(stringResource(id = R.string.enter_password)) },
-        modifier = modifier.widthIn(min = dimensionResource(id = R.dimen.width_medium)),
+        modifier = modifier.width(dimensionResource(id = R.dimen.width_medium)),
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        enabled = enabled
+        enabled = enabled,
+        maxLines = 1,
+        singleLine = true
     )
 }
 
@@ -76,8 +71,10 @@ fun EmailTextField(
         value = email,
         onValueChange = onEmailChange,
         label = { Text(stringResource(id = R.string.enter_email)) },
-        modifier = modifier.widthIn(min = dimensionResource(id = R.dimen.width_medium)),
-        enabled = enabled
+        modifier = modifier.width(dimensionResource(id = R.dimen.width_medium)),
+        enabled = enabled,
+        maxLines = 1,
+        singleLine = true
     )
 }
 

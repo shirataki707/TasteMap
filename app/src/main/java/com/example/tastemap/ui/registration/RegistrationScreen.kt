@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -70,9 +71,11 @@ fun RegistrationScreen(
                 onValueChange = { userName -> viewModel.updateUserName(userName) },
                 label = { Text(stringResource(id = R.string.enter_username)) },
                 enabled = uiState.event is RegistrationUiState.Event.Idle,
+                maxLines = 1,
+                singleLine = true,
                 modifier = modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
-                    .widthIn(min = dimensionResource(id = R.dimen.width_medium))
+                    .width(dimensionResource(id = R.dimen.width_medium))
             )
 
             // メールアドレスの入力欄
@@ -156,8 +159,8 @@ fun RegistrationScreen(
                 }
                 if (showEmailValidDialog) {
                     ValidEmailSendDialog(
-                        titleMessage = "登録したアドレスにメールを送信しました",
-                        message = "認証をしてください",
+                        titleMessage = stringResource(id = R.string.email_send),
+                        message = stringResource(id = R.string.valid_email_content),
                         onDismissRequest = { viewModel.dismissEmailValidDialog(onPopBackButtonClicked) }
                     )
                 }
@@ -185,7 +188,7 @@ fun ValidEmailSendDialog(
             TextButton(
                 onClick = onDismissRequest
             ) {
-                Text(text = "認証しました")
+                Text(text = stringResource(id = R.string.valid_success))
             }
         }
     )

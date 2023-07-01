@@ -29,13 +29,16 @@
     <string name="star_reviews">star: %s, reviews: %s</string>
     <string name="price_level">価格レベル: %s</string>
     <string name="opening">Opening: %s</string>
-    <string name="empty_restaurant_message">検索結果は0件でした。条件を変えて検索してください。</string>
-    <string name="error_location">位置情報の取得に失敗しました。権限を確認するか再度実行してください。</string>
+    <string name="empty_restaurant_message">検索結果は0件でした\n条件を変えて検索してください</string>
+    <string name="error_location">位置情報の取得に失敗しました\n権限を確認するか再度実行してください</string>
     <string name="unknown">不明</string>
     <string name="non_rating">評価なし</string>
     <string name="non_reviews">レビューなし</string>
     <string name="non_website">ウェブサイトなし</string>
-    <string name="error_valid_mail_send">認証メールの送信に失敗しました。</string>
+    <string name="error_valid_mail_send">認証メールの送信に失敗しました</string>
+    <string name="email_send">登録したアドレスにメールを送信しました</string>
+    <string name="valid_email_content">認証をしてください</string>
+    <string name="valid_success">認証しました</string>
 
     <!-- Firebase Auth Error -->
     <string name="email_already_exists">auth/email-already-exists</string>
