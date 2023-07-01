@@ -174,14 +174,14 @@ class SearchRestaurantsUseCase @Inject constructor(
         for (i in (0 until (kotlin.math.min(placeDetails.size, MAX_RESTAURANTS)))) {
             restaurants.add(
                 Restaurant(
-                    name = shops[i].name,
+                    name = shops[i].name,   // [NOTE] shops(hotPepper)とplaceDetails(google)のどちらかの名前
                     rating = placeDetails[i].rating,
                     userReviews = placeDetails[i].userRatingTotal,
                     location = Location(latitude = shops[i].lat, longitude = shops[i].lng),
-                    isOpenNow = placeDetails[i].currentOpeningHours?.openNow ?: false,
-                    weekdayText = placeDetails[i].currentOpeningHours?.weekdayText ?: listOf(""),
-                    priceLevel = placeDetails[i]?.priceLevel ?: -1,
-                    website = placeDetails[i]?.website ?: "non url"
+                    isOpenNow = placeDetails[i].currentOpeningHours?.openNow,
+                    weekdayText = placeDetails[i].currentOpeningHours?.weekdayText,
+                    priceLevel = placeDetails[i].priceLevel,
+                    website = placeDetails[i].website
                 )
             )
         }
@@ -189,10 +189,15 @@ class SearchRestaurantsUseCase @Inject constructor(
         return restaurants.toList()
     }
 
-    // PlaceIDが複数ある場合に対処するため，最近傍のものを探して返す．
-    private fun searchNearestId(candidates: List<PlaceId>): String {
+    // PlaceIDが複数ある場合に対処するため，最近傍のものを探して返す．nullだった場合は""を返して後でフィルタリング
+    private fun searchNearestId(candidates: List<PlaceId>?): String {
         // [TODO] 最近傍のIDを返す．一旦は０個目を返す
-        return candidates[0].placeId
+        Timber.d("raw placeId: $candidates")
+        return if (candidates.isNullOrEmpty()) {
+            ""
+        } else {
+            candidates[0].placeId
+        }
     }
 
     // 好み情報を反映したリストを返す．

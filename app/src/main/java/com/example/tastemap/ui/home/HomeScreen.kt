@@ -262,19 +262,25 @@ fun RestaurantContent(
             )
             Text(
                 stringResource(
-                    id = R.string.star_reviews, restaurantDetail.rating, restaurantDetail.userReviews
+                    id = R.string.star_reviews,
+                    restaurantDetail?.rating ?: stringResource(id = R.string.non_rating),
+                    restaurantDetail?.userReviews ?: stringResource(id = R.string.non_reviews)
                 ),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                stringResource(id = R.string.price_level, restaurantDetail.priceLevel),
+                stringResource(
+                    id = R.string.price_level, 
+                    restaurantDetail?.priceLevel ?: stringResource(id = R.string.unknown)),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                stringResource(id = R.string.opening, restaurantDetail.isOpenNow),
+                stringResource(
+                    id = R.string.opening, 
+                    restaurantDetail?.isOpenNow ?: stringResource(id = R.string.unknown)),
                 style = MaterialTheme.typography.bodyMedium
             )
-            HyperlinkText(url = restaurantDetail.website)
+            HyperlinkText(url = restaurantDetail?.website ?: stringResource(id = R.string.non_website))
         }
     }
 }
