@@ -128,7 +128,7 @@ fun HomeScreen(
                     caption = stringResource(id = R.string.genre),
                     items = genres,
                     selectedIndex = uiState.genreIndex,
-                    onSelectedChange = viewModel.updateGenreIndex,
+                    onSelectedChange = viewModel.updateGenreIndex
                 )
 
                 DropdownList(
@@ -160,8 +160,8 @@ fun HomeScreen(
                                 viewModel.updateErrorUiState(locationErrorMessage)
                             }
                         }
-
-                    }
+                    },
+                    enabled = uiState.event is HomeUiState.Event.Idle || uiState.event is HomeUiState.Event.Success
                 ) {
                     Text(stringResource(id = R.string.search_restaurants))
                 }
