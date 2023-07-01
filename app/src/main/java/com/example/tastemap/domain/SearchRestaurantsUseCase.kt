@@ -7,6 +7,7 @@ import com.example.tastemap.data.api.places.PlacesApiDetailResponse
 import com.example.tastemap.data.api.places.PlacesApiIdRequest
 import com.example.tastemap.data.api.places.PlacesApiIdResponse
 import com.example.tastemap.data.model.Location
+import com.example.tastemap.data.model.Photo
 import com.example.tastemap.data.model.PlaceDetailResult
 import com.example.tastemap.data.model.PlaceId
 import com.example.tastemap.data.model.Restaurant
@@ -181,7 +182,8 @@ class SearchRestaurantsUseCase @Inject constructor(
                     isOpenNow = placeDetails[i].currentOpeningHours?.openNow,
                     weekdayText = placeDetails[i].currentOpeningHours?.weekdayText,
                     priceLevel = placeDetails[i].priceLevel,
-                    website = placeDetails[i].website
+                    website = placeDetails[i].website,
+                    image = getRestaurantImage(shops[i].photo)
                 )
             )
         }
@@ -204,6 +206,15 @@ class SearchRestaurantsUseCase @Inject constructor(
     private fun applyPreference(shopList: List<Shop>): List<Shop> {
         // [TODO] shopListから，好みを抜き出し，ランダムにソート, 20件程度にして返す(ID, Detailのリクエスト回数削減)
         return shopList
+    }
+
+    // hotPepperの結果から画像を探す，PC(l), Mobile(l), PC(m), PC(s), Mobile(s)の優先順
+    private fun getRestaurantImage(photo: Photo?): String? {
+        return photo?.pc?.l.takeIf { !it.isNullOrEmpty() }
+            ?: photo?.mobile?.l.takeIf { !it.isNullOrEmpty() }
+            ?: photo?.pc?.m.takeIf { !it.isNullOrEmpty() }
+            ?: photo?.pc?.s.takeIf { !it.isNullOrEmpty() }
+            ?: photo?.mobile?.s.takeIf { !it.isNullOrEmpty() }
     }
 
     companion object {

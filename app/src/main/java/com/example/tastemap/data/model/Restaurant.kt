@@ -8,5 +8,6 @@ data class Restaurant(
     val isOpenNow: Boolean?,
     val weekdayText: List<String>?,
     val priceLevel: Int?,
-    val website: String?
+    val website: String?,
+    val image: String?,
 )

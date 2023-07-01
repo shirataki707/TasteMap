@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -117,12 +118,13 @@ fun HomeScreen(
             ) {
 
                 // [NOTE] なんかうまく検索できない
-//                @OptIn(ExperimentalMaterial3Api::class)
-//                TextField(
-//                    value = uiState.keyword,
-//                    onValueChange = { keyword -> viewModel.updateKeyword(keyword) },
-//                    label = { Text("検索キーワード (任意)") }
-//                )
+                @OptIn(ExperimentalMaterial3Api::class)
+                TextField(
+                    value = uiState.keyword,
+                    onValueChange = { keyword -> viewModel.updateKeyword(keyword) },
+                    label = { Text("検索キーワード (任意)") },
+                    modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                )
 
                 DropdownList(
                     caption = stringResource(id = R.string.genre),
@@ -244,17 +246,55 @@ private fun openGoogleMap(context: Context, start: Location, destination: String
 @Composable
 fun RestaurantContent(
     modifier: Modifier = Modifier,
-    restaurantDetail: Restaurant) {
+    restaurantDetail: Restaurant
+) {
+    // [TODO] 画像がnullじゃないなら表示
     Column {
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = stringResource(id = R.string.restaurant),
-            modifier = modifier
-                .fillMaxWidth()
-                .aspectRatio(ratio = 1.7731f), // 344x194
-            alignment = Alignment.Center,
-            contentScale = ContentScale.Crop
-        )
+//        if (restaurantDetail.image != null) {
+//            Image(
+//                painter = rememberImagePainter(data = restaurantDetail.image), // Coilを使用して画像を非同期に読み込む
+//                contentDescription = stringResource(id = R.string.restaurant),
+//                modifier = modifier
+//                    .fillMaxWidth()
+//                    .aspectRatio(ratio = 1.7731f), // 344x194
+//                alignment = Alignment.Center,
+//                contentScale = ContentScale.Crop,
+//                loading = {
+//                    // 画像がロードされるまでのプレースホルダー
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_launcher_foreground),
+//                        contentDescription = ""
+//                    )
+//                },
+//                error = {
+//                    // 画像の読み込みエラー時のプレースホルダー
+//                    Image(
+//                        painter = painterResource(R.drawable.ic_launcher_foreground),
+//                        contentDescription = stringResource(id = R.string.restaurant_loading_error)
+//                    )
+//                }
+//            )
+//        } else {
+            // restaurantDetail.imageがnullの場合の画像
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_foreground),
+                contentDescription = stringResource(id = R.string.restaurant),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .aspectRatio(ratio = 1.7731f), // 344x194
+                alignment = Alignment.Center,
+                contentScale = ContentScale.Crop
+            )
+//        }
+//        Image(
+//            painter = painterResource(R.drawable.ic_launcher_foreground),
+//            contentDescription = stringResource(id = R.string.restaurant),
+//            modifier = modifier
+//                .fillMaxWidth()
+//                .aspectRatio(ratio = 1.7731f), // 344x194
+//            alignment = Alignment.Center,
+//            contentScale = ContentScale.Crop
+//        )
         Column(Modifier.padding(dimensionResource(id = R.dimen.padding_medium))) {
             Text(
                 "${restaurantDetail.name}",
@@ -268,6 +308,7 @@ fun RestaurantContent(
                 ),
                 style = MaterialTheme.typography.bodyMedium
             )
+            // [TODO] 価格レベル -> 価格帯
             Text(
                 stringResource(
                     id = R.string.price_level, 
@@ -280,7 +321,9 @@ fun RestaurantContent(
                     restaurantDetail?.isOpenNow ?: stringResource(id = R.string.unknown)),
                 style = MaterialTheme.typography.bodyMedium
             )
-            HyperlinkText(url = restaurantDetail?.website ?: stringResource(id = R.string.non_website))
+            if (restaurantDetail.website != null) {
+                HyperlinkText(url = restaurantDetail?.website)
+            }
         }
     }
 }

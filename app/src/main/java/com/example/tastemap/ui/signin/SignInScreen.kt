@@ -3,6 +3,7 @@ package com.example.tastemap.ui.signin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tastemap.R
 import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
@@ -51,6 +57,8 @@ fun SignInScreen(
         ) {
 
             // [NOTE] 基本的にuiEventがIdle時以外は入力を受け付けない
+
+            SignInIcon()
 
             // メールアドレスの入力欄
             EmailTextField(
@@ -122,4 +130,22 @@ fun SignInScreen(
             SuccessAnimation()
         }
     }
+}
+
+@Composable
+fun SignInIcon(
+    modifier: Modifier = Modifier
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.singin_icon))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        isPlaying = true,
+        iterations = LottieConstants.IterateForever
+    )
+
+    LottieAnimation(
+        composition = composition,
+        progress = progress,
+        modifier = modifier.fillMaxHeight(0.3f)
+    )
 }
