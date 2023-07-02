@@ -33,7 +33,8 @@ class HotPepperMockApiClientImpl @Inject constructor(): HotPepperApiClient {
                 ),
                 open = "月～土、祝前日: 17:30～23:00 （料理L.O. 22:00 ドリンクL.O. 22:30）日、祝日: 17:30～22:00 （料理L.O. 21:00 ドリンクL.O. 21:30）",
                 close = "不定休",
-                nonSmoking = "全面禁煙"
+                nonSmoking = "全面禁煙",
+                photo = null
             ),
             Shop(
                 name = "焼肉 ウエスト 飯塚店",
@@ -50,7 +51,8 @@ class HotPepperMockApiClientImpl @Inject constructor(): HotPepperApiClient {
                 ),
                 open = "月～金、祝前日: 11:30～15:00 （料理L.O. 14:30 ドリンクL.O. 14:30）17:00～22:30 （料理L.O. 22:00 ドリンクL.O. 22:00）土、日、祝日: 11:30～22:30 （料理L.O. 22:00 ドリンクL.O. 22:00）",
                 close = "2020年9月1日より＜年中無休＞",
-                nonSmoking = "全面禁煙"
+                nonSmoking = "全面禁煙",
+                photo = null
             )
         )
 

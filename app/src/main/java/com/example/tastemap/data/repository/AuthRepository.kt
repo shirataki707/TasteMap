@@ -23,7 +23,18 @@ class AuthRepository @Inject constructor(
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Timber.d("currentUserWithEmail: Success")
-                        onSuccess()
+                        // 認証メールを送る
+                        val user = auth.currentUser
+                        user?.sendEmailVerification()
+                            ?.addOnCompleteListener { emailTask ->
+                                if (emailTask.isSuccessful) {
+                                    onSuccess()
+                                    Timber.d("Email sent successfully.")
+                                } else {
+                                    onFailure(Exception("Failed to send verification email."))
+                                    Timber.e(emailTask.exception, "Failed to send verification email.")
+                                }
+                            }
                     } else {
                         Timber.e("createUserWithEmail: Failure", task.exception)
                         val exception = task.exception ?: Exception("Unknown Error")
@@ -44,8 +55,15 @@ class AuthRepository @Inject constructor(
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Timber.d("signInWithEmail: Success")
-                        onSuccess()
+                        // メールアドレスが認証されている場合のみログイン
+                        val user = auth.currentUser
+                        if (user != null && user.isEmailVerified) {
+                            Timber.d("signInWithEmail: Success")
+                            onSuccess()
+                        } else {
+                            Timber.e("signInWithEmail: Failure", task.exception)
+                            onFailure(Exception("メールアドレスが認証されていません"))
+                        }
                     } else {
                         Timber.e("signInWithEmail: Failure", task.exception)
                         val exception = task.exception ?: Exception("Unknown Error")

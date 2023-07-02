@@ -53,11 +53,12 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             searchRestaurantsUseCase(
-                this,
-                request,
-                uiState.value.isSortOptionSelected,
-                onSuccess,
-                onFailure
+                scope = this,
+                request = request,
+                isSortSelected = uiState.value.isSortOptionSelected,
+                userPreferences = uiState.value.userPreferences,
+                onSuccess = onSuccess,
+                onFailure = onFailure
             )
         }
     }
@@ -92,6 +93,10 @@ class HomeViewModel @Inject constructor(
 
     fun updateKeyword(newKeyword: String) {
         _uiState.value = uiState.value.copy(keyword = newKeyword)
+    }
+
+    fun updateErrorUiState(error: String) {
+        _uiState.value = uiState.value.copy(event = HomeUiState.Event.Failure(error))
     }
 
     fun updateIsSortOptionChecked(newBoolean: Boolean) {

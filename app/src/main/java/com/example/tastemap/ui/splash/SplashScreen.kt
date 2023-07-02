@@ -22,11 +22,13 @@ fun SplashScreen(viewModel: SplashViewModel, navController: NavHostController) {
             if (loggedIn) {
                 // ログイン状態の場合，ホーム画面に遷移
                 navController.navigate(TasteMapScreen.Home.name) {
+                    launchSingleTop = true
                     popUpTo(TasteMapScreen.Splash.name) { inclusive = true }
                 }
             } else {
                 // ログインしていない場合，ログイン画面に遷移
                 navController.navigate(TasteMapScreen.SignIn.name) {
+                    launchSingleTop = true
                     popUpTo(TasteMapScreen.Splash.name) { inclusive = true }
                 }
             }

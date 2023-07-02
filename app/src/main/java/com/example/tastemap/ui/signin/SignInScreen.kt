@@ -3,6 +3,7 @@ package com.example.tastemap.ui.signin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,12 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.tastemap.R
 import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
-import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.FullScreenAnimationLoading
 import com.example.tastemap.ui.components.PasswordTextField
-import com.example.tastemap.ui.components.SuccessIcon
+import com.example.tastemap.ui.components.SuccessAnimation
 import kotlinx.coroutines.delay
 
 @Composable
@@ -51,6 +57,8 @@ fun SignInScreen(
         ) {
 
             // [NOTE] 基本的にuiEventがIdle時以外は入力を受け付けない
+
+            SignInIcon()
 
             // メールアドレスの入力欄
             EmailTextField(
@@ -98,7 +106,7 @@ fun SignInScreen(
 
         // uiイベントに応じた画面を描画
         when (val event = uiState.event) {
-            is SignInUiState.Event.Loading -> { FullScreenLoading() }
+            is SignInUiState.Event.Loading -> { FullScreenAnimationLoading() }
             is SignInUiState.Event.SignInFailure -> {
                 ErrorDialog(
                     stringResource(id = R.string.auth_error),
@@ -110,7 +118,7 @@ fun SignInScreen(
             is SignInUiState.Event.SignInSuccess -> {
                 LaunchedEffect(Unit) {
                         showSuccessMessage = true
-                        delay(1000) // 1秒間表示する
+                        delay(2000) // 2秒間表示する
                         showSuccessMessage = false
                         onSignInButtonClicked()
                 }
@@ -119,7 +127,25 @@ fun SignInScreen(
         }
 
         if (showSuccessMessage) {
-            SuccessIcon()
+            SuccessAnimation()
         }
     }
+}
+
+@Composable
+fun SignInIcon(
+    modifier: Modifier = Modifier
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.singin_icon))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        isPlaying = true,
+        iterations = LottieConstants.IterateForever
+    )
+
+    LottieAnimation(
+        composition = composition,
+        progress = progress,
+        modifier = modifier.fillMaxHeight(0.3f)
+    )
 }

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -30,9 +32,9 @@ import com.example.tastemap.R
 import com.example.tastemap.ui.components.DropdownList
 import com.example.tastemap.ui.components.EmailTextField
 import com.example.tastemap.ui.components.ErrorDialog
-import com.example.tastemap.ui.components.FullScreenLoading
+import com.example.tastemap.ui.components.FullScreenAnimationLoading
 import com.example.tastemap.ui.components.PasswordTextField
-import com.example.tastemap.ui.components.SuccessIcon
+import com.example.tastemap.ui.components.SuccessAnimation
 import kotlinx.coroutines.delay
 
 // [TODO] 架空のメールアドレスで登録できるので，メール認証をする
@@ -41,13 +43,13 @@ import kotlinx.coroutines.delay
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
     viewModel: RegistrationViewModel = viewModel(),
-    onPopBackButtonClicked: () -> Unit,
-    onRegisterButtonClicked: () -> Unit
+    onPopBackButtonClicked: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
 
     var showSuccessMessage by remember { mutableStateOf(false) }
+    var showEmailValidDialog by remember { mutableStateOf(false) }
 
     val reviewPriorities = stringArrayResource(id = R.array.reviewPriorities).toList()
     val smokingPriorities = stringArrayResource(id = R.array.smokingPriorities).toList()
@@ -69,9 +71,11 @@ fun RegistrationScreen(
                 onValueChange = { userName -> viewModel.updateUserName(userName) },
                 label = { Text(stringResource(id = R.string.enter_username)) },
                 enabled = uiState.event is RegistrationUiState.Event.Idle,
+                maxLines = 1,
+                singleLine = true,
                 modifier = modifier
                     .padding(dimensionResource(id = R.dimen.padding_small))
-                    .widthIn(min = dimensionResource(id = R.dimen.width_medium))
+                    .width(dimensionResource(id = R.dimen.width_medium))
             )
 
             // メールアドレスの入力欄
@@ -137,7 +141,7 @@ fun RegistrationScreen(
 
         // uiイベントに応じた画面を描画
         when (val event = uiState.event) {
-            is RegistrationUiState.Event.Loading -> { FullScreenLoading() }
+            is RegistrationUiState.Event.Loading -> { FullScreenAnimationLoading() }
             is RegistrationUiState.Event.RegisterFailure -> {
                 ErrorDialog(
                     stringResource(id = R.string.auth_error),
@@ -149,15 +153,43 @@ fun RegistrationScreen(
             is RegistrationUiState.Event.RegisterSuccess -> {
                 LaunchedEffect(Unit) {
                     showSuccessMessage = true
-                    delay(1000) // 1秒間表示する
+                    delay(2000) // 2秒間表示する
                     showSuccessMessage = false
-                    onRegisterButtonClicked()
+                    showEmailValidDialog = true
+                }
+                if (showEmailValidDialog) {
+                    ValidEmailSendDialog(
+                        titleMessage = stringResource(id = R.string.email_send),
+                        message = stringResource(id = R.string.valid_email_content),
+                        onDismissRequest = { viewModel.dismissEmailValidDialog(onPopBackButtonClicked) }
+                    )
                 }
             }
             else -> {}
         }
         if (showSuccessMessage) {
-            SuccessIcon()
+            SuccessAnimation()
         }
     }
+}
+
+// 認証メール送信ダイアログ
+@Composable
+fun ValidEmailSendDialog(
+    titleMessage: String,
+    message: String,
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(text = titleMessage) },
+        text = { Text(text = message) },
+        confirmButton = {
+            TextButton(
+                onClick = onDismissRequest
+            ) {
+                Text(text = stringResource(id = R.string.valid_success))
+            }
+        }
+    )
 }
